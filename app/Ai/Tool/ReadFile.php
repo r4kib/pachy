@@ -2,49 +2,48 @@
 
 namespace App\Ai\Tool;
 
-use NeuronAI\Agent\Tool;
-use NeuronAI\Agent\ToolProperty;
-use function getcwd;
-use function realpath;
-use function strpos;
+use NeuronAI\Tools\Tool;
+use NeuronAI\Tools\ToolProperty;
+use NeuronAI\Tools\PropertyType;
+use App\Ai\Tool\Traits\ValidatesPath;
+use function file_exists;
+use function is_file;
+use function is_readable;
+use function file_get_contents;
 
 class ReadFile extends Tool
 {
+    use ValidatesPath;
+
     public function __construct()
     {
         parent::__construct(
             'read_file',
             'Read the contents of a file from the project directory.'
         );
-
-        $this->addProperty(
-            ToolProperty::make('filepath', 'STRING', 'Path to the file relative to the project root (no leading slashes)', true)
-        );
     }
 
-    public function run(array $args): string
+    protected function properties(): array
     {
-        return $this->validate($args['filepath']);
+        return [
+            new ToolProperty(
+                name: 'filepath',
+                type: PropertyType::STRING,
+                description: 'Path to the file relative to the project root',
+                required: true
+            )
+        ];
     }
 
-    public function validate(string $path): string
+    public function __invoke(string $filepath): string
     {
-        $fullPath = realpath(getcwd() . DIRECTORY_SEPARATOR . $path);
-
-        if ($fullPath === false) {
-            return getcwd() . DIRECTORY_SEPARATOR . $path;
-        }
-
-        $projectPath = realpath(getcwd());
-        if (strpos($fullPath . DIRECTORY_SEPARATOR, $projectPath . DIRECTORY_SEPARATOR) === false) {
-            throw new \Exception("Security: Attempted to access file outside project directory");
-        }
+        $fullPath = $this->validatePath($filepath);
 
         if (!file_exists($fullPath) || !is_file($fullPath)) {
-            return "Error: File not found at path '{$path}'";
+            return "Error: File not found at path '{$filepath}'";
         }
         if (!is_readable($fullPath)) {
-            return "Error: Cannot read file at path '{$path}'";
+            return "Error: Cannot read file at path '{$filepath}'";
         }
         return file_get_contents($fullPath);
     }

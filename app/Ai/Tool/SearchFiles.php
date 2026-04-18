@@ -2,55 +2,63 @@
 
 namespace App\Ai\Tool;
 
-use NeuronAI\Agent\Tool;
-use NeuronAI\Agent\ToolProperty;
+use NeuronAI\Tools\Tool;
+use NeuronAI\Tools\ToolProperty;
+use NeuronAI\Tools\PropertyType;
+use App\Ai\Tool\Traits\ValidatesPath;
 use Symfony\Component\Finder\Finder;
+use function getcwd;
 use function array_map;
 use function explode;
-use function preg_match;
 use function stripos;
 use function str_replace;
 use function substr;
 use function trim;
 use function implode;
+use function file_get_contents;
 
 class SearchFiles extends Tool
 {
+    use ValidatesPath;
+
     public function __construct()
     {
         parent::__construct(
             'search_files',
             'Search for files containing specific text in the project directory.'
         );
-
-        $this->addProperty(
-            ToolProperty::make('pattern', 'STRING', 'Text pattern to search for in file contents', true)
-        );
-
-        $this->addProperty(
-            ToolProperty::make('directory', 'STRING', 'Optional directory to search in (defaults to project root)', false)
-        );
-
-        $this->addProperty(
-            ToolProperty::make('types', 'STRING', 'Optional file types to search (comma separated: php,js,html,css,txt)', false)
-        );
     }
 
-    public function run(array $args): string
+    protected function properties(): array
     {
-        return $this->search(
-            $args['pattern'],
-            $args['directory'] ?? null,
-            $args['types'] ?? null
-        );
+        return [
+            new ToolProperty(
+                name: 'pattern',
+                type: PropertyType::STRING,
+                description: 'Text pattern to search for in file contents',
+                required: true
+            ),
+            new ToolProperty(
+                name: 'directory',
+                type: PropertyType::STRING,
+                description: 'Optional directory to search in (defaults to project root)',
+                required: false
+            ),
+            new ToolProperty(
+                name: 'types',
+                type: PropertyType::STRING,
+                description: 'Optional file types to search (comma separated: php,js,html,css,txt)',
+                required: false
+            )
+        ];
     }
 
-    public function search(string $pattern, string $directory = null, string $types = null): string
+    public function __invoke(string $pattern, string $directory = null, string $types = null): string
     {
-        $basePath = $directory ?: getcwd();
+        $basePath = getcwd();
 
         if ($directory) {
-            $basePath = $this->validate($directory);
+            $basePath = $this->validatePath($directory);
         }
 
         $finder = Finder::create()
@@ -73,7 +81,7 @@ class SearchFiles extends Tool
             $content = file_get_contents($file->getRealPath());
 
             if (stripos($content, $pattern) !== false) {
-                $results[] = "File: {$filepath}\n  Content: " . substr($content, strpos($content, $pattern), 100) . '...';
+                $results[] = "File: {$filepath}\n  Content: " . substr($content, stripos($content, $pattern), 100) . '...';
                 $count++;
 
                 if ($count >= 20) {
@@ -88,21 +96,5 @@ class SearchFiles extends Tool
 
         $output = "Found {$count} files with pattern '{$pattern}':\n\n" . implode("\n---\n\n", $results);
         return $output;
-    }
-
-    public function validate(string $path): string
-    {
-        $fullPath = realpath(getcwd() . DIRECTORY_SEPARATOR . $path);
-
-        if ($fullPath === false) {
-            return getcwd() . DIRECTORY_SEPARATOR . $path;
-        }
-
-        $projectPath = realpath(getcwd());
-        if (strpos($fullPath . DIRECTORY_SEPARATOR, $projectPath . DIRECTORY_SEPARATOR) === false) {
-            throw new \Exception("Security: Attempted to access file outside project directory");
-        }
-
-        return $fullPath;
     }
 }

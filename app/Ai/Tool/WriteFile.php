@@ -2,40 +2,49 @@
 
 namespace App\Ai\Tool;
 
-use NeuronAI\Agent\Tool;
-use NeuronAI\Agent\ToolProperty;
-use function getcwd;
-use function realpath;
-use function strpos;
+use NeuronAI\Tools\Tool;
+use NeuronAI\Tools\ToolProperty;
+use NeuronAI\Tools\PropertyType;
+use App\Ai\Tool\Traits\ValidatesPath;
 use function dirname;
+use function is_dir;
+use function mkdir;
+use function is_writable;
 use function file_put_contents;
 
 class WriteFile extends Tool
 {
+    use ValidatesPath;
+
     public function __construct()
     {
         parent::__construct(
             'write_file',
             'Write or overwrite the contents of a file in the project directory.'
         );
-
-        $this->addProperty(
-            ToolProperty::make('filepath', 'STRING', 'Path to the file relative to the project root (no leading slashes)', true)
-        );
-
-        $this->addProperty(
-            ToolProperty::make('content', 'STRING', 'Content to write to the file', true)
-        );
     }
 
-    public function run(array $args): string
+    protected function properties(): array
     {
-        return $this->save($args['filepath'], $args['content']);
+        return [
+            new ToolProperty(
+                name: 'filepath',
+                type: PropertyType::STRING,
+                description: 'Path to the file relative to the project root',
+                required: true
+            ),
+            new ToolProperty(
+                name: 'content',
+                type: PropertyType::STRING,
+                description: 'Content to write to the file',
+                required: true
+            )
+        ];
     }
 
-    public function save(string $filepath, string $content): string
+    public function __invoke(string $filepath, string $content): string
     {
-        $fullPath = $this->validate($filepath);
+        $fullPath = $this->validatePath($filepath);
         $directory = dirname($fullPath);
 
         if (!is_dir($directory) && !mkdir($directory, 0755, true) && !is_dir($directory)) {
@@ -51,21 +60,5 @@ class WriteFile extends Tool
         }
 
         return "Successfully wrote content to file at '{$filepath}'";
-    }
-
-    public function validate(string $path): string
-    {
-        $fullPath = realpath(getcwd() . DIRECTORY_SEPARATOR . $path);
-
-        if ($fullPath === false) {
-            return getcwd() . DIRECTORY_SEPARATOR . $path;
-        }
-
-        $projectPath = realpath(getcwd());
-        if (strpos($fullPath . DIRECTORY_SEPARATOR, $projectPath . DIRECTORY_SEPARATOR) === false) {
-            throw new \Exception("Security: Attempted to access file outside project directory");
-        }
-
-        return $fullPath;
     }
 }

@@ -10,9 +10,22 @@ use NeuronAI\Agent\Agent;
 use NeuronAI\Agent\SystemPrompt;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Providers\Gemini\Gemini;
+use NeuronAI\Agent\Events\ToolCalledEvent;
+use Illuminate\Support\Facades\Event;
 
 class Coder extends Agent
 {
+    public function __construct()
+    {
+        parent::__construct();
+        
+        // Listen for tool calls
+        Event::listen(ToolCalledEvent::class, function (ToolCalledEvent $event) {
+            echo "\n🛠  [Tool Called]: " . $event->tool->getName() . "\n";
+            echo "   Arguments: " . json_encode($event->arguments) . "\n";
+        });
+    }
+
     protected function provider(): AIProviderInterface
     {
         return new Gemini(

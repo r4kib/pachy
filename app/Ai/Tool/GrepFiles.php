@@ -2,51 +2,63 @@
 
 namespace App\Ai\Tool;
 
-use NeuronAI\Agent\Tool;
-use NeuronAI\Agent\ToolProperty;
+use NeuronAI\Tools\Tool;
+use NeuronAI\Tools\ToolProperty;
+use NeuronAI\Tools\PropertyType;
+use App\Ai\Tool\Traits\ValidatesPath;
 use Symfony\Component\Finder\Finder;
+use function getcwd;
 use function explode;
 use function implode;
 use function preg_match;
 use function str_replace;
+use function array_slice;
+use function array_unique;
+use function file_get_contents;
+use function strtolower;
 
 class GrepFiles extends Tool
 {
+    use ValidatesPath;
+
     public function __construct()
     {
         parent::__construct(
             'grep_files',
             'Search for text patterns in files using regex capture.'
         );
-
-        $this->addProperty(
-            ToolProperty::make('pattern', 'STRING', 'Regular expression pattern to search for', true)
-        );
-
-        $this->addProperty(
-            ToolProperty::make('directory', 'STRING', 'Optional directory to search in (defaults to project root)', false)
-        );
-
-        $this->addProperty(
-            ToolProperty::make('output_format', 'STRING', 'Format: "lines" (show matching lines), "files" (show matching files only)', false)
-        );
     }
 
-    public function run(array $args): string
+    protected function properties(): array
     {
-        return $this->grep(
-            $args['pattern'],
-            $args['directory'] ?? null,
-            $args['output_format'] ?? 'lines'
-        );
+        return [
+            new ToolProperty(
+                name: 'pattern',
+                type: PropertyType::STRING,
+                description: 'Regular expression pattern to search for',
+                required: true
+            ),
+            new ToolProperty(
+                name: 'directory',
+                type: PropertyType::STRING,
+                description: 'Optional directory to search in (defaults to project root)',
+                required: false
+            ),
+            new ToolProperty(
+                name: 'output_format',
+                type: PropertyType::STRING,
+                description: 'Format: "lines" (show matching lines), "files" (show matching files only)',
+                required: false
+            )
+        ];
     }
 
-    public function grep(string $pattern, string $directory = null, string $output_format = 'lines'): string
+    public function __invoke(string $pattern, string $directory = null, string $output_format = 'lines'): string
     {
-        $basePath = $directory ?: getcwd();
+        $basePath = getcwd();
 
         if ($directory) {
-            $basePath = $this->validate($directory);
+            $basePath = $this->validatePath($directory);
         }
 
         $finder = Finder::create()
@@ -95,21 +107,5 @@ class GrepFiles extends Tool
         $output = "Found " . count($results) . " matching file(s) with {$lineCount} total matches:\n\n" .
                    implode("\n\n---\n\n", $results);
         return $output;
-    }
-
-    public function validate(string $path): string
-    {
-        $fullPath = realpath(getcwd() . DIRECTORY_SEPARATOR . $path);
-
-        if ($fullPath === false) {
-            return getcwd() . DIRECTORY_SEPARATOR . $path;
-        }
-
-        $projectPath = realpath(getcwd());
-        if (strpos($fullPath . DIRECTORY_SEPARATOR, $projectPath . DIRECTORY_SEPARATOR) === false) {
-            throw new \Exception("Security: Attempted to access file outside project directory");
-        }
-
-        return $fullPath;
     }
 }
