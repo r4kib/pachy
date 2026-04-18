@@ -5,12 +5,8 @@ namespace App\Ai\Tool;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
 use NeuronAI\Tools\PropertyType;
+use function Laravel\Prompts\confirm;
 use function shell_exec;
-use function fopen;
-use function fgets;
-use function fclose;
-use function trim;
-use function strtolower;
 
 class RunCommandTool extends Tool
 {
@@ -36,14 +32,7 @@ class RunCommandTool extends Tool
 
     public function __invoke(string $command): string
     {
-        echo "\n⚠️  AI REQUEST: Execute command: `{$command}`\n";
-        echo "Do you allow this? (y/n): ";
-
-        $handle = fopen("php://stdin", "r");
-        $response = trim(fgets($handle));
-        fclose($handle);
-
-        if (strtolower($response) !== 'y') {
+        if (!confirm("Execute command: `{$command}`?")) {
             return "Command execution denied by user.";
         }
 
