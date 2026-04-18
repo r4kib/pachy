@@ -106,15 +106,6 @@ class Coder extends Command
                 $content = $response->getContent();
 
                 $this->line($content);
-                $this->newLine();
-
-                $save = $this->confirm('Save this response to a file?', false);
-
-                if ($save) {
-                    $filename = $this->ask('Enter filename (e.g., response.md)', 'response.md');
-                    file_put_contents($filename, $content);
-                    $this->info("✓ Saved to {$filename}");
-                }
 
                 $this->newLine();
             }

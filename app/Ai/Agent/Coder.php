@@ -4,6 +4,7 @@ namespace App\Ai\Agent;
 
 use App\Ai\Tool\GrepFiles;
 use App\Ai\Tool\ReadFile;
+use App\Ai\Tool\RunCommandTool;
 use App\Ai\Tool\SearchFiles;
 use App\Ai\Tool\WriteFile;
 use NeuronAI\Agent\Agent;
@@ -69,6 +70,7 @@ class Coder extends Agent
             new WriteFile(),
             new SearchFiles(),
             new GrepFiles(),
+            new RunCommandTool(),
         ];
     }
 }
