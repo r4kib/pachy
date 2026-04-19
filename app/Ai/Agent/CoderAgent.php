@@ -2,8 +2,11 @@
 
 namespace App\Ai\Agent;
 
+use App\Ai\Agent\Middleware\HumanApproval;
 use App\Ai\Tools\FileSystem\FileSystemToolkit;
 use NeuronAI\Agent\Agent;
+use NeuronAI\Agent\Middleware\ToolApproval;
+use NeuronAI\Agent\Nodes\ToolNode;
 use NeuronAI\Agent\SystemPrompt;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Providers\Gemini\Gemini;
@@ -25,7 +28,7 @@ class CoderAgent extends Agent
 
     protected function instructions(): string
     {
-        return (string) new SystemPrompt(
+        return (string)new SystemPrompt(
             background: [
                 "You are an expert AI Coder specialized in PHP and JavaScript web development.",
                 "You are proficient in modern web technologies, frameworks, and best practices.",
@@ -55,6 +58,15 @@ class CoderAgent extends Agent
     {
         return [
             FileSystemToolkit::make(),
+        ];
+    }
+
+    protected function middleware(): array
+    {
+        return [
+            ToolNode::class => [
+                new HumanApproval(),
+            ],
         ];
     }
 }
