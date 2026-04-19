@@ -5,7 +5,6 @@ namespace App\Ai\Agent;
 use App\Ai\Agent\Middleware\HumanApproval;
 use App\Ai\Tools\FileSystem\FileSystemToolkit;
 use NeuronAI\Agent\Agent;
-use NeuronAI\Agent\Middleware\ToolApproval;
 use NeuronAI\Agent\Nodes\ToolNode;
 use NeuronAI\Agent\SystemPrompt;
 use NeuronAI\Providers\AIProviderInterface;
@@ -28,7 +27,7 @@ class CoderAgent extends Agent
 
     protected function instructions(): string
     {
-        return (string)new SystemPrompt(
+        return (string) new SystemPrompt(
             background: [
                 "You are an expert AI Coder specialized in PHP and JavaScript web development.",
                 "You are proficient in modern web technologies, frameworks, and best practices.",
@@ -50,7 +49,10 @@ class CoderAgent extends Agent
                 "Explain your approach and reasoning when helpful.",
                 "Use Markdown for code blocks and structured output.",
                 "For file-related operations, read or write files in the project directory only."
-            ]
+            ],
+            toolsUsage: [
+                "ALWAYS prefer using specific file system tools (e.g., read_file, glob_path, grep_file_content) to explore, inspect, or manipulate files. Only use the 'bash' tool as a last resort, for example when executing complex build commands, tests, or linters that cannot be accomplished by other tools.",
+            ],
         );
     }
 
@@ -65,7 +67,7 @@ class CoderAgent extends Agent
     {
         return [
             ToolNode::class => [
-                new HumanApproval(),
+                new HumanApproval,
             ],
         ];
     }
