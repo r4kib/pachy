@@ -2,29 +2,17 @@
 
 namespace App\Ai\Agent;
 
-use App\Ai\Tool\GrepFiles;
-use App\Ai\Tool\ReadFile;
-use App\Ai\Tool\RunCommandTool;
-use App\Ai\Tool\SearchFiles;
-use App\Ai\Tool\WriteFile;
+use App\Ai\Tools\FileSystem\FileSystemToolkit;
 use NeuronAI\Agent\Agent;
 use NeuronAI\Agent\SystemPrompt;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Providers\Gemini\Gemini;
-use NeuronAI\Agent\Events\ToolCalledEvent;
-use Illuminate\Support\Facades\Event;
 
-class Coder extends Agent
+class CoderAgent extends Agent
 {
     public function __construct()
     {
         parent::__construct();
-        
-        // Listen for tool calls
-        Event::listen(ToolCalledEvent::class, function (ToolCalledEvent $event) {
-            echo "\n🛠  [Tool Called]: " . $event->tool->getName() . "\n";
-            echo "   Arguments: " . json_encode($event->arguments) . "\n";
-        });
     }
 
     protected function provider(): AIProviderInterface
@@ -66,11 +54,7 @@ class Coder extends Agent
     protected function tools(): array
     {
         return [
-            new ReadFile(),
-            new WriteFile(),
-            new SearchFiles(),
-            new GrepFiles(),
-            new RunCommandTool(),
+            FileSystemToolkit::make(),
         ];
     }
 }

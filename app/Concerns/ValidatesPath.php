@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Ai\Tool\Traits;
+namespace App\Concerns;
 
 use function getcwd;
 use function realpath;

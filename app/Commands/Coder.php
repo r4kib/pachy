@@ -8,6 +8,7 @@ use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Chat\Messages\Stream\Chunks\TextChunk;
 use NeuronAI\Chat\Messages\Stream\Chunks\ToolCallChunk;
 use NeuronAI\Chat\Messages\Stream\Chunks\ToolResultChunk;
+use App\Support\CliMarkdownRenderer;
 
 class Coder extends Command
 {
@@ -55,22 +56,24 @@ class Coder extends Command
         $this->line("💭 Prompt: {$prompt}");
 
         try {
-            $agent = \App\Ai\Agent\Coder::make();
+            $agent = \App\Ai\Agent\CoderAgent::make();
             $message = UserMessage::make($prompt);
-            
-            $this->info("🤖 Response:");
-            
+
+            $this->info("🤖 Thinking...");
+
             $stream = $agent->stream($message);
+            $fullContent = '';
             foreach ($stream->events() as $chunk) {
                 if ($chunk instanceof TextChunk) {
-                    $this->output->write($chunk->content);
+                    $fullContent .= $chunk->content;
                 } elseif ($chunk instanceof ToolCallChunk) {
-                    $this->output->write("\n🛠  [Tool Called]: " . $chunk->tool->getName() . "\n");
+                    $this->output->write("\n🛠  Calling: " . $chunk->tool->getName() . "...");
                 } elseif ($chunk instanceof ToolResultChunk) {
-                    $this->output->write("\n✅ [Tool Result]: " . $chunk->tool->getResult() . "\n");
+                    $this->output->write(" Done.\n");
                 }
             }
             $this->newLine();
+            $this->line(CliMarkdownRenderer::render($fullContent));
 
             return Command::SUCCESS;
         } catch (\Exception $e) {
@@ -88,7 +91,7 @@ class Coder extends Command
         $this->info('Type your coding prompt and press Enter. Type "!exit" to quit.');
 
         try {
-            $agent = \App\Ai\Agent\Coder::make();
+            $agent = \App\Ai\Agent\CoderAgent::make();
 
             while (true) {
                 $prompt = $this->ask('What would you like me to code?');
@@ -106,17 +109,22 @@ class Coder extends Command
                 $this->newLine();
 
                 $message = UserMessage::make($prompt);
-                
+
+                $this->info("🤖 Thinking...");
                 $stream = $agent->stream($message);
+                $fullContent = '';
                 foreach ($stream->events() as $chunk) {
                     if ($chunk instanceof TextChunk) {
-                        $this->output->write($chunk->content);
+                        $fullContent .= $chunk->content;
                     } elseif ($chunk instanceof ToolCallChunk) {
-                        $this->output->write("\n🛠  [Tool Called]: " . $chunk->tool->getName() . "\n");
+                        $this->output->write("\n🛠  Calling: " . $chunk->tool->getName() . "...");
                     } elseif ($chunk instanceof ToolResultChunk) {
-                        $this->output->write("\n✅ [Tool Result]: " . $chunk->tool->getResult() . "\n");
+                        $this->output->write(" Done.\n");
                     }
                 }
+
+                $this->newLine();
+                $this->line(CliMarkdownRenderer::render($fullContent));
 
                 $this->newLine();
             }
