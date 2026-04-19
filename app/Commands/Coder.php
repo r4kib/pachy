@@ -58,13 +58,7 @@ class Coder extends Command
 
             $content = $response->getContent();
 
-            if ($this->option('file')) {
-                file_put_contents($this->option('file'), $content);
-                $this->info("✓ Response saved to {$this->option('file')}");
-                return Command::SUCCESS;
-            }
-
-            $this->info("\n🤖 Response:\n");
+            $this->info("🤖 Response:");
             $this->line($content);
 
             return Command::SUCCESS;
@@ -80,7 +74,7 @@ class Coder extends Command
     private function runInteractiveCoder(): int
     {
         $this->info('🤖 Coder Agent - Interactive Mode');
-        $this->info('Type your coding prompt and press Enter. Type "!exit" to quit.\n');
+        $this->info('Type your coding prompt and press Enter. Type "!exit" to quit.');
 
         try {
             $agent = \App\Ai\Agent\Coder::make();
