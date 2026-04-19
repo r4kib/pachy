@@ -18,8 +18,8 @@ class CoderAgent extends Agent
     protected function provider(): AIProviderInterface
     {
         return new Gemini(
-            key: env('GEMINI_API_KEY'),
-            model: env('GEMINI_MODEL', 'gemini-2.0-flash-exp'),
+            key: config('services.gemini.key'),
+            model: config('services.gemini.model'),
         );
     }
 
