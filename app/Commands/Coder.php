@@ -2,13 +2,13 @@
 
 namespace App\Commands;
 
+use App\Ai\Agent\CoderAgent;
+use App\Observers\CliToolObserver;
+use App\Support\CliMarkdownRenderer;
 use Illuminate\Console\Scheduling\Schedule;
 use LaravelZero\Framework\Commands\Command;
-use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Chat\Messages\Stream\Chunks\TextChunk;
-use NeuronAI\Chat\Messages\Stream\Chunks\ToolCallChunk;
-use NeuronAI\Chat\Messages\Stream\Chunks\ToolResultChunk;
-use App\Support\CliMarkdownRenderer;
+use NeuronAI\Chat\Messages\UserMessage;
 
 class Coder extends Command
 {
@@ -34,9 +34,9 @@ class Coder extends Command
      */
     public function handle()
     {
-        if (!$this->option('interactive')) {
+        if (! $this->option('interactive')) {
             // Single prompt mode
-            if (!$this->argument('prompt')) {
+            if (! $this->argument('prompt')) {
                 return $this->error('Please provide a coding prompt or use the --interactive flag.');
             }
 
@@ -56,20 +56,18 @@ class Coder extends Command
         $this->line("💭 Prompt: {$prompt}");
 
         try {
-            $agent = \App\Ai\Agent\CoderAgent::make();
+            $agent = CoderAgent::make();
+            $agent->observe(new CliToolObserver);
+
             $message = UserMessage::make($prompt);
 
-            $this->info("🤖 Thinking...");
+            $this->info('🤖 Thinking...');
 
             $stream = $agent->stream($message);
             $fullContent = '';
             foreach ($stream->events() as $chunk) {
                 if ($chunk instanceof TextChunk) {
                     $fullContent .= $chunk->content;
-                } elseif ($chunk instanceof ToolCallChunk) {
-                    $this->output->write("\n🛠  Calling: " . $chunk->tool->getName() . "...");
-                } elseif ($chunk instanceof ToolResultChunk) {
-                    $this->output->write(" Done.\n");
                 }
             }
             $this->newLine();
@@ -77,7 +75,8 @@ class Coder extends Command
 
             return Command::SUCCESS;
         } catch (\Exception $e) {
-            $this->error("❌ Error: " . $e->getMessage());
+            $this->error('❌ Error: '.$e->getMessage());
+
             return Command::FAILURE;
         }
     }
@@ -91,7 +90,8 @@ class Coder extends Command
         $this->info('Type your coding prompt and press Enter. Type "!exit" to quit.');
 
         try {
-            $agent = \App\Ai\Agent\CoderAgent::make();
+            $agent = CoderAgent::make();
+            $agent->observe(new CliToolObserver);
 
             while (true) {
                 $prompt = $this->ask('What would you like me to code?');
@@ -110,16 +110,12 @@ class Coder extends Command
 
                 $message = UserMessage::make($prompt);
 
-                $this->info("🤖 Thinking...");
+                $this->info('🤖 Thinking...');
                 $stream = $agent->stream($message);
                 $fullContent = '';
                 foreach ($stream->events() as $chunk) {
                     if ($chunk instanceof TextChunk) {
                         $fullContent .= $chunk->content;
-                    } elseif ($chunk instanceof ToolCallChunk) {
-                        $this->output->write("\n🛠  Calling: " . $chunk->tool->getName() . "...");
-                    } elseif ($chunk instanceof ToolResultChunk) {
-                        $this->output->write(" Done.\n");
                     }
                 }
 
@@ -131,7 +127,8 @@ class Coder extends Command
 
             return Command::SUCCESS;
         } catch (\Exception $e) {
-            $this->error("❌ Error: " . $e->getMessage());
+            $this->error('❌ Error: '.$e->getMessage());
+
             return Command::FAILURE;
         }
     }
