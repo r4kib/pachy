@@ -4,16 +4,12 @@ declare(strict_types=1);
 
 namespace App\Ai\Tools\FileSystem;
 
+use Illuminate\Support\Facades\Process;
 use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
 
-use function fclose;
 use function getcwd;
-use function is_dir;
-use function proc_close;
-use function proc_open;
-use function stream_get_contents;
 
 /**
  * Execute a bash command and return its output.
@@ -50,63 +46,24 @@ class BashTool extends Tool
     {
         $cwd = $working_directory ?? getcwd();
 
-        if ($working_directory !== null && !is_dir($working_directory)) {
-            return [
-                'status' => 'error',
-                'operation' => 'bash',
-                'command' => $command,
-                'output' => '',
-                'exit_code' => 1,
-                'working_directory' => $working_directory,
-                'message' => "Working directory '{$working_directory}' does not exist.",
-            ];
-        }
+        // Run the command using Laravel's Process facade
+        $result = Process::path($cwd)->run($command);
 
-        $descriptors = [
-            0 => ['pipe', 'r'],
-            1 => ['pipe', 'w'],
-            2 => ['pipe', 'w'],
-        ];
+        $output = $result->output();
+        $errorOutput = $result->errorOutput();
+        $combinedOutput = $output . ($errorOutput !== '' ? "\n" . $errorOutput : '');
 
-        $process = proc_open($command, $descriptors, $pipes, $cwd);
-
-        if ($process === false) {
-            return [
-                'status' => 'error',
-                'operation' => 'bash',
-                'command' => $command,
-                'output' => '',
-                'exit_code' => 1,
-                'working_directory' => $cwd,
-                'message' => 'Failed to start process.',
-            ];
-        }
-
-        fclose($pipes[0]);
-
-        $stdout = stream_get_contents($pipes[1]);
-        $stderr = stream_get_contents($pipes[2]);
-        fclose($pipes[1]);
-        fclose($pipes[2]);
-
-        $exitCode = proc_close($process);
-
-        $output = $stdout !== false ? $stdout : '';
-        if ($stderr !== false && $stderr !== '') {
-            $output .= ($output !== '' ? "\n" : '') . $stderr;
-        }
-
-        $status = $exitCode === 0 ? 'success' : 'error';
-        $message = $exitCode === 0
+        $status = $result->successful() ? 'success' : 'error';
+        $message = $result->successful()
             ? 'Command executed successfully.'
-            : "Command exited with code {$exitCode}.";
+            : "Command exited with code {$result->exitCode()}.";
 
         return [
             'status' => $status,
             'operation' => 'bash',
             'command' => $command,
-            'output' => $output,
-            'exit_code' => $exitCode,
+            'output' => $combinedOutput,
+            'exit_code' => $result->exitCode(),
             'working_directory' => $cwd,
             'message' => $message,
         ];
