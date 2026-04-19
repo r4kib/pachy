@@ -5,6 +5,9 @@ namespace App\Commands;
 use Illuminate\Console\Scheduling\Schedule;
 use LaravelZero\Framework\Commands\Command;
 use NeuronAI\Chat\Messages\UserMessage;
+use NeuronAI\Chat\Messages\Stream\Chunks\TextChunk;
+use NeuronAI\Chat\Messages\Stream\Chunks\ToolCallChunk;
+use NeuronAI\Chat\Messages\Stream\Chunks\ToolResultChunk;
 
 class Coder extends Command
 {
@@ -54,12 +57,20 @@ class Coder extends Command
         try {
             $agent = \App\Ai\Agent\Coder::make();
             $message = UserMessage::make($prompt);
-            $response = $agent->chat($message)->getMessage();
-
-            $content = $response->getContent();
-
+            
             $this->info("🤖 Response:");
-            $this->line($content);
+            
+            $stream = $agent->stream($message);
+            foreach ($stream->events() as $chunk) {
+                if ($chunk instanceof TextChunk) {
+                    $this->output->write($chunk->content);
+                } elseif ($chunk instanceof ToolCallChunk) {
+                    $this->output->write("\n🛠  [Tool Called]: " . $chunk->tool->getName() . "\n");
+                } elseif ($chunk instanceof ToolResultChunk) {
+                    $this->output->write("\n✅ [Tool Result]: " . $chunk->tool->getResult() . "\n");
+                }
+            }
+            $this->newLine();
 
             return Command::SUCCESS;
         } catch (\Exception $e) {
@@ -95,11 +106,17 @@ class Coder extends Command
                 $this->newLine();
 
                 $message = UserMessage::make($prompt);
-                $response = $agent->chat($message)->getMessage();
-
-                $content = $response->getContent();
-
-                $this->line($content);
+                
+                $stream = $agent->stream($message);
+                foreach ($stream->events() as $chunk) {
+                    if ($chunk instanceof TextChunk) {
+                        $this->output->write($chunk->content);
+                    } elseif ($chunk instanceof ToolCallChunk) {
+                        $this->output->write("\n🛠  [Tool Called]: " . $chunk->tool->getName() . "\n");
+                    } elseif ($chunk instanceof ToolResultChunk) {
+                        $this->output->write("\n✅ [Tool Result]: " . $chunk->tool->getResult() . "\n");
+                    }
+                }
 
                 $this->newLine();
             }
