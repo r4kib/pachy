@@ -70,4 +70,9 @@ class BashTool extends Tool
             'message' => $message,
         ];
     }
+
+    public function requiresHumanApproval(array $arguments): bool
+    {
+        return false;
+    }
 }

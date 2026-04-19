@@ -13,10 +13,18 @@ class HumanApproval extends ToolApproval
         parent::__construct();
     }
 
+    protected function filterToolsRequiringApproval(array $tools): array
+    {
+        return array_filter(
+            $tools,
+            $this->toolRequiresApproval(...)
+        );
+    }
+
     protected function toolRequiresApproval(ToolInterface $tool): bool
     {
-        if (method_exists($tool, 'shouldConfirm')) {
-            return $tool->shouldConfirm($tool->getInputs());
+        if (method_exists($tool, 'requiresHumanApproval')) {
+            return $tool->requiresHumanApproval($tool->getInputs());
         }
 
         return false;
