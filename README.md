@@ -1,3 +1,3 @@
 # Pachy
 
-A PHP development utility.
+Minimal PHP development utility.

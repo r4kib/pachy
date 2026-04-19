@@ -75,6 +75,7 @@ class Coder extends Command
 
             return Command::SUCCESS;
         } catch (\Exception $e) {
+            print_r($e->getMessage());
             $this->error('❌ Error: '.$e->getMessage());
 
             return Command::FAILURE;
