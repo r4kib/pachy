@@ -28,7 +28,7 @@ class CoderSystemPrompt extends SystemPrompt
                 'Include relevant examples and usage comments.',
                 'Output complete, functional code when applicable.',
                 'Explain your approach and reasoning when helpful.',
-                'Use Markdown for code blocks and structured output.',
+                'Use Github Flavored Markdown for code blocks and structured output.',
                 'For file-related operations, read or write files in the project directory only.',
             ],
             toolsUsage: [
