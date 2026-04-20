@@ -2,7 +2,9 @@
 
 namespace App\Support;
 
+use Illuminate\Support\Str;
 use function Termwind\render;
+use function Termwind\terminal;
 
 class RenderHelper
 {
@@ -22,6 +24,16 @@ class RenderHelper
     {
         render('<div class="px-1 bg-red-600 text-white">✘ TOOL FAILED</div>');
         render('<div class="text-red-500 font-bold">Error: '.$error.'</div>');
+    }
+
+    public static function renderMarkDown($fullContent): void
+    {
+        try {
+            render(Str::markdown($fullContent));
+        } catch (\Exception $e) {
+            render($fullContent);
+        }
+
     }
 
 }

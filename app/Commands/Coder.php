@@ -4,12 +4,11 @@ namespace App\Commands;
 
 use App\Ai\Agent\CoderAgent;
 use App\Observers\CliToolObserver;
+use App\Support\RenderHelper;
 use Illuminate\Console\Scheduling\Schedule;
-use Illuminate\Support\Str;
 use LaravelZero\Framework\Commands\Command;
 use NeuronAI\Chat\Messages\Stream\Chunks\TextChunk;
 use NeuronAI\Chat\Messages\UserMessage;
-use function Termwind\render;
 
 class Coder extends Command
 {
@@ -33,7 +32,7 @@ class Coder extends Command
     public function handle()
     {
         $this->info('🤖 Coder Agent - Interactive Mode');
-        $this->info('Type your coding prompt and press Enter. Type "!exit" to quit.');
+        $this->info('Type your coding prompt and press Enter. Type "exit" to quit.');
 
         try {
             $this->runAgent();
@@ -55,7 +54,7 @@ class Coder extends Command
             if (empty($prompt)) continue;
 
 
-            if (trim($prompt) === '!exit') {
+            if (trim($prompt) === 'exit') {
                 $this->info('👋 Goodbye!');
                 break;
             }
@@ -76,7 +75,7 @@ class Coder extends Command
             }
 
             $this->newLine();
-            render(Str::markdown($fullContent));
+            RenderHelper::renderMarkDown($fullContent);
             $this->newLine();
         }
     }
