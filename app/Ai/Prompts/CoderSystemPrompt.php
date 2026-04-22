@@ -36,6 +36,7 @@ class CoderSystemPrompt extends SystemPrompt
                 'ALWAYS prefer using specific file system tools (e.g., read_file, glob_path, grep_file_content) to explore, inspect, or manipulate files.',
                 'Only use the \'bash\' tool as a last resort.',
                 'When a tool provides feedback or error messages, integrate that information into your next thought process.',
+                'If one tool dont give satisfactory result with 5 consecutive turn move to another tool.',
             ],
         );
     }
