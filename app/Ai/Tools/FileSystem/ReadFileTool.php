@@ -40,17 +40,19 @@ class ReadFileTool extends Tool
             return "Error: File '{$file_path}' does not exist.";
         }
 
-        if (!is_readable($file_path)) {
-            return "Error: File '{$file_path}' is not readable.";
-        }
+        return match (is_readable($file_path)) {
+            false => "Error: File '{$file_path}' is not readable.",
+            default => $this->readFile($file_path),
+        };
+    }
 
-        $content = file_get_contents($file_path);
-        if ($content === false) {
-            return "Error: Unable to read file '{$file_path}'.";
-        }
+    private function readFile(string $path): string
+    {
+        $content = file_get_contents($path);
 
-        $length = mb_strlen($content);
-
-        return $content . "\n\n[File read successfully: {$length} characters]";
+        return match ($content) {
+            false => "Error: Unable to read file '{$path}'.",
+            default => "{$content}\n\n[File read successfully: " . mb_strlen($content) . " characters]",
+        };
     }
 }
