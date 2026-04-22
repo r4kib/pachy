@@ -18,6 +18,7 @@ use function is_file;
 
 class CodebaseSearchTool extends Tool
 {
+    protected ?int $maxRuns = 20;
     public function __construct()
     {
         parent::__construct(
