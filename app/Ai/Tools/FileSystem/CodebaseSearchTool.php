@@ -72,6 +72,10 @@ class CodebaseSearchTool extends Tool
         ?int $context_lines = 0,
         ?string $programming_language = 'php'
     ): string {
+        $path = $path ?? '.';
+        $case_insensitive = $case_insensitive ?? true;
+        $context_lines = $context_lines ?? 0;
+        $programming_language = $programming_language ?? 'php';
         if (!is_dir($path) && !is_file($path)) {
             return "Error: Path '{$path}' does not exist.";
         }
