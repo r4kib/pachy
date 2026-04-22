@@ -4,13 +4,13 @@ namespace App\Ai\Tools\FileSystem;
 
 use NeuronAI\Tools\Tool;
 
-class DescribeDirectoryContentTool extends Tool
+class DescribeProjectRootDirectoryTool extends Tool
 {
     public function __construct()
     {
         parent::__construct(
-            'describe_directory_content',
-            'Provides a dynamic, structured overview of the project\'s root directory, including key directories, essential configuration files, and inferred capabilities.'
+            'describe_project_root_directory',
+            'Provides a dynamic, structured overview of the project\'s root directory, Dont use for generale purpose directory search'
         );
     }
 

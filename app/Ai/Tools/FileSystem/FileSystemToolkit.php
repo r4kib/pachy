@@ -13,13 +13,13 @@ class FileSystemToolkit extends AbstractToolkit
 {
     public function guidelines(): ?string
     {
-        return 'Explore and read files and directories. Start with describe_directory_content to understand structure, then use read_file, grep_file_content, or glob_path as needed. For documents (PDF, HTML), use preview_file before parse_file to confirm relevance.';
+        return 'Explore and read files and directories. Start with describe_project_root_directory to understand structure, then use read_file, grep_file_content, or glob_path as needed. For documents (PDF, HTML), use preview_file before parse_file to confirm relevance.';
     }
 
     public function provide(): array
     {
         return [
-            DescribeDirectoryContentTool::make(),
+            DescribeProjectRootDirectoryTool::make(),
             ReadFileTool::make(),
             GrepFileContentTool::make(),
             GlobPathTool::make(),
@@ -27,7 +27,7 @@ class FileSystemToolkit extends AbstractToolkit
             WriteFileTool::make(),
             DeleteFileTool::make(),
             EditFileTool::make(),
-             CodebaseSearchTool::make(),
+            CodebaseSearchTool::make(),
         ];
     }
 }
