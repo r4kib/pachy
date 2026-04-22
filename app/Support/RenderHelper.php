@@ -26,10 +26,9 @@ class RenderHelper
         render('<div class="text-red-500 font-bold">Error: '.$error.'</div>');
     }
 
-    public static function renderNoToolResult(string $error): void
+    public static function renderNoToolResult(): void
     {
         render('<div class="px-1 bg-red-600 text-white">[!] Failed to get tool result</div>');
-        render('<div class="text-red-500 font-bold">Error: '.$error.'</div>');
 
     }
 
