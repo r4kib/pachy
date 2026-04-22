@@ -73,6 +73,6 @@ class BashTool extends Tool
 
     public function requiresHumanApproval(array $arguments): bool
     {
-        return false;
+        return true;
     }
 }
