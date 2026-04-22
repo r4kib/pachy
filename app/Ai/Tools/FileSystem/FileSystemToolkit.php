@@ -27,7 +27,7 @@ class FileSystemToolkit extends AbstractToolkit
             WriteFileTool::make(),
             DeleteFileTool::make(),
             EditFileTool::make(),
-            BashTool::make(),
+             CodebaseSearchTool::make(),
         ];
     }
 }
