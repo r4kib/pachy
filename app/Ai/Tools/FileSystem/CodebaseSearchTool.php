@@ -44,7 +44,7 @@ class CodebaseSearchTool extends Tool
             ToolProperty::make(
                 name: 'path',
                 type: PropertyType::STRING,
-                description: 'Target directory or file path (default: project root).',
+                description: 'Target directory or file path (default: .).',
             ),
             ToolProperty::make(
                 name: 'case_insensitive',
@@ -67,10 +67,10 @@ class CodebaseSearchTool extends Tool
     public function __invoke(
         string $pattern,
         string $mode,
-        string $path = '.',
-        bool $case_insensitive = true,
-        int $context_lines = 0,
-        string $programming_language = 'php'
+        ?string $path = '.',
+        ?bool $case_insensitive = true,
+        ?int $context_lines = 0,
+        ?string $programming_language = 'php'
     ): string {
         if (!is_dir($path) && !is_file($path)) {
             return "Error: Path '{$path}' does not exist.";
@@ -111,10 +111,13 @@ class CodebaseSearchTool extends Tool
 
         $output = "";
         foreach ($results as $result) {
-            $output .= $this->formatResult($result) . "\n";
+            $formatted=$this->formatResult($result);
+            if ($formatted){
+                $output .= $formatted . "\n";
+            }
         }
 
-        return $output;
+        return $output?: "No results found for pattern '{$pattern}'.";
     }
 
     private function formatResult(mixed $result): string
