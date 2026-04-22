@@ -103,7 +103,8 @@ class Coder extends Command
     public function handleResponse(AgentHandler $response): void
     {
         $this->newLine();
-        RenderHelper::renderMarkDown($response->getMessage()->getContent());
+//        RenderHelper::renderMarkDown($response->getMessage()->getContent());
+        $this->line($response->getMessage()->getContent());
         $this->newLine();
     }
 

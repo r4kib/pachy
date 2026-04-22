@@ -19,14 +19,18 @@ class CliToolObserver implements ObserverInterface
 
         if ($data instanceof ToolCalled) {
             $tool = $data->tool;
-            $result = $tool->getResult();
-            $dataArray = json_decode($result, true);
 
-            if (isset($dataArray['status']) && $dataArray['status'] === 'error') {
-                $error = $dataArray['message'] ?? 'Unknown error';
-                RenderHelper::renderToolFailure($error);
-            } else {
-                RenderHelper::renderToolSuccess($result);
+            try {
+                $result = $tool->getResult();
+                $dataArray = json_decode($result, true);
+                if (isset($dataArray['status']) && $dataArray['status'] === 'error') {
+                    $error = $dataArray['message'] ?? 'Unknown error';
+                    RenderHelper::renderToolFailure($error);
+                } else {
+                    RenderHelper::renderToolSuccess($result);
+                }
+            } catch (\Exception $e) {
+                    RenderHelper::renderToolFailure($e->getMessage());
             }
         }
     }
