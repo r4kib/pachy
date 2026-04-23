@@ -31,15 +31,4 @@ class RenderHelper
         render('<div class="px-1 bg-red-600 text-white">[!] Failed to get tool result</div>');
 
     }
-
-    public static function renderMarkDown($fullContent): void
-    {
-        try {
-            render(Str::markdown($fullContent));
-        } catch (\Exception $e) {
-            render($fullContent);
-        }
-
-    }
-
 }

@@ -5,10 +5,14 @@ namespace App\Commands;
 use App\Ai\Agent\CoderAgent;
 use App\Observers\CliToolObserver;
 use App\Support\RenderHelper;
+use App\Support\StreamHealer;
+use App\Support\StreamMarkdownRenderer;
+use App\Support\TermwindMarkdownConverter;
 use Illuminate\Console\Scheduling\Schedule;
 use LaravelZero\Framework\Commands\Command;
 use NeuronAI\Agent\AgentHandler;
 use NeuronAI\Chat\Messages\UserMessage;
+use NeuronAI\Chat\Messages\Stream\Chunks\TextChunk;
 use NeuronAI\Workflow\Interrupt\ApprovalRequest;
 use NeuronAI\Workflow\Interrupt\WorkflowInterrupt;
 use NeuronAI\Workflow\Persistence\FilePersistence;
@@ -56,7 +60,7 @@ class Coder extends Command
 
             $this->info('🤖 Thinking...');
             try {
-                $this->handleResponse($this->agent->chat($message));
+                $this->handleResponse($this->agent->stream($message));
             } catch (WorkflowInterrupt $e) {
                 $this->handleInterrupt($e);
             }
@@ -75,7 +79,7 @@ class Coder extends Command
                 $this->handleApproval($action);
             }
 
-            $this->handleResponse($this->agent->chat(interrupt: $approvalRequest));
+            $this->handleResponse($this->agent->stream(interrupt: $approvalRequest));
 
         } catch (WorkflowInterrupt $nested) {
             $this->handleInterrupt($nested);
@@ -103,8 +107,19 @@ class Coder extends Command
     public function handleResponse(AgentHandler $response): void
     {
         $this->newLine();
-        RenderHelper::renderMarkDown($response->getMessage()->getContent());
-        $this->line($response->getMessage()->getContent());
+        $renderer = new StreamMarkdownRenderer();
+
+        foreach ($response->events() as $event) {
+            if ($event instanceof TextChunk) {
+                $output = $renderer->push($event->content);
+
+                if ($output !== '') {
+                    $this->output->write($output);
+                }
+
+            }
+        }
+
         $this->newLine();
 
         $this->printUsageStats($response);

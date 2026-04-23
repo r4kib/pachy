@@ -28,6 +28,8 @@ class InspireCommand extends Command
      */
     public function handle(): void
     {
+        $this->notify("Hello Web Artisan", "Love beautiful..", "icon.png");
+
         render(<<<'HTML'
             <div class="py-1 ml-2">
                 <div class="px-1 bg-blue-300 text-black">Laravel Zero</div>
