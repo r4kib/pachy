@@ -103,8 +103,28 @@ class Coder extends Command
     public function handleResponse(AgentHandler $response): void
     {
         $this->newLine();
-//        RenderHelper::renderMarkDown($response->getMessage()->getContent());
+        RenderHelper::renderMarkDown($response->getMessage()->getContent());
         $this->line($response->getMessage()->getContent());
+        $this->newLine();
+
+        $this->printUsageStats($response);
+    }
+
+    private function printUsageStats(AgentHandler $response): void
+    {
+        $time = microtime(true) - LARAVEL_START;
+        $memory = memory_get_peak_usage(true) / 1024 / 1024;
+        $usage = $response->getMessage()->getUsage();
+
+        $this->newLine();
+        $this->components->info(sprintf(
+            'Usage Stats: Time: %.2fs | Memory: %.2f MB | Input Tokens: %d | Output Tokens: %d | Total Tokens: %d',
+            $time,
+            $memory,
+            $usage->inputTokens ?? 0,
+            $usage->outputTokens ?? 0,
+            $usage->getTotal() ?? 0
+        ));
         $this->newLine();
     }
 
