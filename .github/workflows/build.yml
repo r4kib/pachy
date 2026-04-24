@@ -26,7 +26,7 @@ jobs:
         run: composer install --no-dev --optimize-autoloader
 
       - name: Build Application
-        run: php artisan app:build pachy --no-interaction
+        run: php pachy app:build  --no-interaction
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
