@@ -133,12 +133,13 @@ class Coder extends Command
 
         $this->newLine();
         $this->components->info(sprintf(
-            'Usage Stats: Time: %.2fs | Memory: %.2f MB | Input Tokens: %d | Output Tokens: %d | Total Tokens: %d',
+            'Stats: Time: %.2fs | Memory: %.2f MB | Tokens (In, Out, Total): %d , %d , %d | CWD: %s',
             $time,
             $memory,
             $usage->inputTokens ?? 0,
             $usage->outputTokens ?? 0,
-            $usage->getTotal() ?? 0
+            $usage->getTotal() ?? 0,
+            getcwd()
         ));
         $this->newLine();
     }
