@@ -23,7 +23,7 @@ jobs:
           ini-values: phar.readonly=0
 
       - name: Install Dependencies
-        run: composer install --no-dev --optimize-autoloader
+        run: composer install --optimize-autoloader
 
       - name: Build Application
         run: php pachy app:build  --no-interaction
