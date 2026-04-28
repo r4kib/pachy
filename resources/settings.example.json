@@ -1,0 +1,10 @@
+{
+    "providers": [
+        {
+            "provider": "gemini",
+            "key": "",
+            "model": "gemini-3-flash",
+            "name": "gemini-1"
+        }
+    ]
+}
