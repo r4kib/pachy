@@ -3,7 +3,7 @@
     "description": "Minimalist Coding Agent Written in PHP",
     "keywords": ["agent", "coding", "ai", "console", "cli"],
     "homepage": "https://github.com/r4kib/pachy",
-    "type": "project",
+    "type": "library",
     "license": "MIT",
     "support": {
         "issues": "https://github.com/r4kib/pachy/issues",
