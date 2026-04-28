@@ -5,6 +5,7 @@ namespace App\Commands;
 use App\Ai\Agent\CoderAgent;
 use App\Observers\CliToolObserver;
 use App\Support\RenderHelper;
+use App\Support\Settings\SettingsHelper;
 use App\Support\StreamHealer;
 use App\Support\StreamMarkdownRenderer;
 use App\Support\TermwindMarkdownConverter;
@@ -139,6 +140,7 @@ class Coder extends Command
             $usage->inputTokens ?? 0,
             $usage->outputTokens ?? 0,
             $usage->getTotal() ?? 0,
+            SettingsHelper::getProviderSetting()['model'] ?? "",
             getcwd()
         ));
         $this->newLine();

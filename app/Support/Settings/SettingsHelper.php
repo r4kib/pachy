@@ -22,7 +22,7 @@ class SettingsHelper
         }
         $filePath = $dir . DIRECTORY_SEPARATOR . $filename;
         if (!File::exists($filePath)) {
-            File::put($filePath, json_encode(['updated'=> time()], JSON_PRETTY_PRINT));
+            File::put($filePath, json_encode(['updated' => time()], JSON_PRETTY_PRINT));
         }
         return $filePath;
     }
@@ -35,40 +35,38 @@ class SettingsHelper
 
     public static function storeSettings(array $settings): void
     {
-        File::put(self::globalSettingsPath(), json_encode( $settings, JSON_PRETTY_PRINT));
+        File::put(self::globalSettingsPath(), json_encode($settings, JSON_PRETTY_PRINT));
     }
 
     public static function updateSettings(array $settings): void
     {
-        File::put(self::globalSettingsPath(), json_encode( array_replace_recursive(self::getSettings(),$settings), JSON_PRETTY_PRINT));
+        File::put(self::globalSettingsPath(), json_encode(array_replace_recursive(self::getSettings(), $settings), JSON_PRETTY_PRINT));
     }
-    public static function getProvider()
+
+    public static function getProviderSetting(): array
     {
         $settings = self::getSettings();
-        if (isset($settings['providers'][0])) {
-            $provider = $settings['providers'][0];
-            switch ($provider['provider']) {
-                case('gemini'):
-                    return new Gemini(
-                        key: $provider['key'],
-                        model: $provider['model'],
-                    );
-                case('anthropic'):
-                    return new Anthropic(
-                        key: $provider['key'],
-                        model: $provider['model'],
-                    );
-                case('openai'):
-                    return new OpenAI(
-                        key: $provider['key'],
-                        model: $provider['model'],
-                    );
-                default:
-                    throw new \Exception("No valid provider found.");
+        return $settings['providers'][0] ?? [];
+    }
 
-            }
+    public static function getProvider()
+    {
 
-        }
-
+        $provider = self::getProviderSetting();
+        return match ($provider['provider']) {
+            'gemini' => new Gemini(
+                key: $provider['key'],
+                model: $provider['model'],
+            ),
+            'anthropic' => new Anthropic(
+                key: $provider['key'],
+                model: $provider['model'],
+            ),
+            'openai' => new OpenAI(
+                key: $provider['key'],
+                model: $provider['model'],
+            ),
+            default => throw new \Exception("No valid provider found."),
+        };
     }
 }
