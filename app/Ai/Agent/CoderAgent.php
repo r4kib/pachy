@@ -5,6 +5,7 @@ namespace App\Ai\Agent;
 use App\Ai\Agent\Middleware\HumanApproval;
 use App\Ai\Prompts\CoderSystemPrompt;
 use App\Ai\Tools\FileSystem\FileSystemToolkit;
+use App\Support\Settings\SettingsHelper;
 use NeuronAI\Agent\Agent;
 use NeuronAI\Agent\Nodes\ToolNode;
 use NeuronAI\Providers\AIProviderInterface;
@@ -19,10 +20,7 @@ class CoderAgent extends Agent
 
     protected function provider(): AIProviderInterface
     {
-        return new Gemini(
-            key: config('services.gemini.key'),
-            model: config('services.gemini.model'),
-        );
+        return SettingsHelper::getProvider();
     }
 
     protected function instructions(): string
