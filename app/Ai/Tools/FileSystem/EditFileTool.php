@@ -104,7 +104,17 @@ class EditFileTool extends Tool
             ];
         }
 
+        $occurrenceCount = substr_count($current, $search);
+
+        if ($occurrenceCount > 1) {
+            return [
+                'status' => 'error',
+                'message' => "The search string is not unique (found {$occurrenceCount} occurrences). Please provide more context to identify the specific block."
+            ];
+        }
+
         $updated = str_replace($search, $replace, $current);
+
         $result = file_put_contents($file_path, $updated);
 
         if ($result === false) {
