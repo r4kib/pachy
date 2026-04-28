@@ -28,7 +28,7 @@ jobs:
           ini-values: phar.readonly=0
 
       - name: Install Dependencies
-        run: composer install --no-dev --optimize-autoloader
+        run: composer install --optimize-autoloader
 
       - name: Run Semantic Release (full pipeline)
         uses: cycjimmy/semantic-release-action@v4
