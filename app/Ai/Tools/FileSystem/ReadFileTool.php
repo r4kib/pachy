@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Ai\Tools\FileSystem;
 
+use App\Ai\Tools\BaseTool;
 use NeuronAI\Tools\PropertyType;
-use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
 
 use function file_get_contents;
@@ -13,7 +13,7 @@ use function is_file;
 use function is_readable;
 use function mb_strlen;
 
-class ReadFileTool extends Tool
+class ReadFileTool extends BaseTool
 {
     public function __construct()
     {
