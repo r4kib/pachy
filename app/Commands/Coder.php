@@ -120,7 +120,7 @@ class Coder extends Command
 
         $this->newLine();
         $this->components->info(sprintf(
-            'Stats: Time: %.2fs | Memory: %.2f MB | Tokens (In, Out, Total): %d , %d , %d | CWD: %s',
+            'Stats: Time: %.2fs | Memory: %.2f MB | Tokens (In, Out, Total): %d , %d , %d | %s | CWD: %s',
             $time,
             $memory,
             $usage->inputTokens ?? 0,
