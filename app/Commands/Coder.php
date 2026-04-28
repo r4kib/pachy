@@ -3,12 +3,9 @@
 namespace App\Commands;
 
 use App\Ai\Agent\CoderAgent;
-use App\Observers\CliToolObserver;
-use App\Support\RenderHelper;
+use App\Support\AgentHelper;
 use App\Support\Settings\SettingsHelper;
-use App\Support\StreamHealer;
 use App\Support\StreamMarkdownRenderer;
-use App\Support\TermwindMarkdownConverter;
 use Illuminate\Console\Scheduling\Schedule;
 use LaravelZero\Framework\Commands\Command;
 use NeuronAI\Agent\AgentHandler;
@@ -16,7 +13,6 @@ use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Chat\Messages\Stream\Chunks\TextChunk;
 use NeuronAI\Workflow\Interrupt\ApprovalRequest;
 use NeuronAI\Workflow\Interrupt\WorkflowInterrupt;
-use NeuronAI\Workflow\Persistence\FilePersistence;
 
 class Coder extends Command
 {
@@ -29,7 +25,7 @@ class Coder extends Command
     {
         $this->info('🤖 Coder Agent - Interactive Mode');
         $this->info('Type your coding prompt and press Enter. Type "exit" to quit.');
-        $this->agent = $this->getAgent();
+        $this->agent = AgentHelper::initCoderAgent();
 
         try {
             $this->runAgent();
@@ -85,16 +81,6 @@ class Coder extends Command
         } catch (WorkflowInterrupt $nested) {
             $this->handleInterrupt($nested);
         }
-    }
-
-
-    private function getAgent(): CoderAgent
-    {
-        $store = new FilePersistence('storage/app');
-        $agent = CoderAgent::make();
-        $agent->observe(new CliToolObserver)
-            ->setPersistence($store);
-        return $agent;
     }
 
     /**
