@@ -1,0 +1,35 @@
+name: Build Pachy PHAR
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: mbstring, xml, openssl, zlib, phar
+          ini-values: phar.readonly=0
+
+      - name: Install Dependencies
+        run: composer install --optimize-autoloader
+
+      - name: Build Application
+        run: php pachy app:build  --no-interaction
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pachy-executable
+          path: builds/pachy
