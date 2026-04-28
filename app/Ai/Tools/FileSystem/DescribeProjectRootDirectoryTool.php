@@ -26,7 +26,7 @@ class DescribeProjectRootDirectoryTool extends Tool
     protected function getTree(string $root): string
     {
         $tree = [];
-        $excludes = ['.git', '.idea', '.', '..', '.env'];
+        $excludes = ['.git', '.idea', '.', '..', '.env','.pachy'];
         $iterator = new \DirectoryIterator($root);
 
         foreach ($iterator as $fileInfo) {
