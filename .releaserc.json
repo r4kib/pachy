@@ -15,7 +15,7 @@
         [
             "@semantic-release/git",
             {
-                "assets": ["builds/pachy"],
+                "assets": ["builds/pachy",  "builds/version.txt"],
                 "message": "chore(build): release ${nextRelease.version} [skip ci]"
             }
         ],
