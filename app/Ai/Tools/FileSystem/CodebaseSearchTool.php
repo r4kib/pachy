@@ -12,6 +12,7 @@ use Greph\Text\TextSearchOptions;
 use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
+use PhpParser\Node;
 
 use function is_dir;
 use function is_file;
@@ -19,6 +20,7 @@ use function is_file;
 class CodebaseSearchTool extends Tool
 {
     protected ?int $maxRuns = 20;
+
     public function __construct()
     {
         parent::__construct(
@@ -61,7 +63,7 @@ class CodebaseSearchTool extends Tool
                 name: 'programming_language',
                 type: PropertyType::STRING,
                 description: 'Programming language (AST mode) (default: php).',
-            )
+            ),
         ];
     }
 
@@ -77,20 +79,19 @@ class CodebaseSearchTool extends Tool
         $case_insensitive = $case_insensitive ?? true;
         $context_lines = $context_lines ?? 0;
         $programming_language = $programming_language ?? 'php';
-        if (!is_dir($path) && !is_file($path)) {
+        if (! is_dir($path) && ! is_file($path)) {
             return "Error: Path '{$path}' does not exist.";
         }
 
-        if (!in_array($mode ,['text', 'ast'], true)) {
+        if (! in_array($mode, ['text', 'ast'], true)) {
             return "Error: Invalid mode '{$mode}'. Must be 'text' or 'ast'.";
         }
 
-
         try {
             if ($mode === 'text') {
-                $results=Greph::searchText($pattern, $path, new TextSearchOptions(caseInsensitive: $case_insensitive, beforeContext: $context_lines, afterContext: $context_lines));
-            }else if ($mode === 'ast') {
-                $results=Greph::searchAst($pattern, $path, new AstSearchOptions(language: $programming_language));
+                $results = Greph::searchText($pattern, $path, new TextSearchOptions(caseInsensitive: $case_insensitive, beforeContext: $context_lines, afterContext: $context_lines));
+            } elseif ($mode === 'ast') {
+                $results = Greph::searchAst($pattern, $path, new AstSearchOptions(language: $programming_language));
             }
         } catch (\Exception $e) {
             return "Error during search: {$e->getMessage()}";
@@ -107,44 +108,47 @@ class CodebaseSearchTool extends Tool
             $displayResults = array_slice($results, 0, 5);
 
             foreach ($displayResults as $result) {
-                $summary .= $this->formatResult($result) . "\n";
+                $summary .= $this->formatResult($result)."\n";
             }
 
             $summary .= "\nPlease refine your search pattern or path to see more results.";
+
             return $summary;
         }
 
-        $output = "";
+        $output = '';
         foreach ($results as $result) {
-            $formatted=$this->formatResult($result);
-            if ($formatted){
-                $output .= $formatted . "\n";
+            $formatted = $this->formatResult($result);
+            if ($formatted) {
+                $output .= $formatted."\n";
             }
         }
 
-        return $output?: "No results found for pattern '{$pattern}'.";
+        return $output ?: "No results found for pattern '{$pattern}'.";
     }
 
     private function formatResult(mixed $result): string
     {
         $cwd = getcwd();
         if ($result instanceof TextFileResult) {
-            $output= "";
-            $file = str_replace($cwd,'', $result->file);
+            $output = '';
+            $file = str_replace($cwd, '', $result->file);
             foreach ($result->matches as $match) {
-                $output.= sprintf('%s:%d:%d:%s', $file,
+                $output .= sprintf('%s:%d:%d:%s', $file,
                     $match->line,
                     $match->column,
                     trim($match->content)
                 );
             }
+
             return $output;
         }
 
         if ($result instanceof AstMatch) {
             return $this->formatAstMatch($result);
         }
-        return "";
+
+        return '';
     }
 
     public function formatAstMatch(AstMatch $match): string
@@ -152,7 +156,7 @@ class CodebaseSearchTool extends Tool
         // 1. Format captures into a compact string: key=val,key2=val2
         $caps = [];
         foreach ($match->captures as $key => $val) {
-            $value = ($val instanceof \PhpParser\Node) ? $val->getType() : (string)$val;
+            $value = ($val instanceof Node) ? $val->getType() : (string) $val;
             $caps[] = "$key=$value";
         }
         $capString = implode(',', $caps);
@@ -161,7 +165,7 @@ class CodebaseSearchTool extends Tool
         $cleanCode = preg_replace('/\s+/', ' ', $cleanCode);
 
         return sprintf(
-            "%s:%d:%d: [%s] %s",
+            '%s:%d:%d: [%s] %s',
             $match->file,
             $match->startLine,
             $match->startFilePos,
@@ -169,6 +173,4 @@ class CodebaseSearchTool extends Tool
             trim($cleanCode)
         );
     }
-
 }
-

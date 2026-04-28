@@ -18,6 +18,7 @@ use function getcwd;
 class BashTool extends Tool
 {
     use RequiresHumanApproval;
+
     public function __construct()
     {
         parent::__construct(
@@ -53,7 +54,7 @@ class BashTool extends Tool
 
         $output = $result->output();
         $errorOutput = $result->errorOutput();
-        $combinedOutput = $output . ($errorOutput !== '' ? "\n" . $errorOutput : '');
+        $combinedOutput = $output.($errorOutput !== '' ? "\n".$errorOutput : '');
 
         $status = $result->successful() ? 'success' : 'error';
         $message = $result->successful()

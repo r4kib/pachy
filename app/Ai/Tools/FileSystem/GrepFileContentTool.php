@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace App\Ai\Tools\FileSystem;
 
+use const PREG_OFFSET_CAPTURE;
+
 use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
 
+use function count;
+use function explode;
 use function file_get_contents;
 use function is_file;
 use function is_readable;
-use function preg_match_all;
-use function count;
-use function explode;
 use function mb_strlen;
 use function mb_substr;
 use function preg_last_error_msg;
-
-use const PREG_OFFSET_CAPTURE;
+use function preg_match_all;
 
 class GrepFileContentTool extends Tool
 {
@@ -48,11 +48,11 @@ class GrepFileContentTool extends Tool
 
     public function __invoke(string $file_path, string $pattern): string
     {
-        if (!is_file($file_path)) {
+        if (! is_file($file_path)) {
             return "Error: File '{$file_path}' does not exist.";
         }
 
-        if (!is_readable($file_path)) {
+        if (! is_readable($file_path)) {
             return "Error: File '{$file_path}' is not readable.";
         }
 
@@ -66,6 +66,7 @@ class GrepFileContentTool extends Tool
 
         if ($result === false) {
             $error = preg_last_error_msg();
+
             return "Error: Invalid regex pattern '{$pattern}'. {$error}";
         }
 
@@ -93,9 +94,9 @@ class GrepFileContentTool extends Tool
                 $linesBefore += $lineLength;
             }
 
-            $truncatedMatch = mb_strlen($matchText) > 100 ? mb_substr($matchText, 0, 97) . '...' : $matchText;
+            $truncatedMatch = mb_strlen($matchText) > 100 ? mb_substr($matchText, 0, 97).'...' : $matchText;
 
-            $output .= "  Match " . ($index + 1) . " (line {$lineIndex}): {$truncatedMatch}\n";
+            $output .= '  Match '.($index + 1)." (line {$lineIndex}): {$truncatedMatch}\n";
         }
 
         return $output;

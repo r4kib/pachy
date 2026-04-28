@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace App\Ai\Tools\FileSystem;
 
+use const DIRECTORY_SEPARATOR;
+
 use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
 
-use function is_dir;
-use function natsort;
-use function str_replace;
-use function str_starts_with;
 use function array_unique;
 use function array_values;
 use function count;
 use function glob;
+use function is_dir;
+use function natsort;
 use function scandir;
-
-use const DIRECTORY_SEPARATOR;
+use function str_replace;
+use function str_starts_with;
 
 class GlobPathTool extends Tool
 {
@@ -48,7 +48,7 @@ class GlobPathTool extends Tool
 
     public function __invoke(string $directory, string $pattern): string
     {
-        if (!is_dir($directory)) {
+        if (! is_dir($directory)) {
             return "Error: Directory '{$directory}' does not exist.";
         }
 
@@ -66,9 +66,9 @@ class GlobPathTool extends Tool
         natsort($matches);
         $matches = array_values($matches);
 
-        $output = "Found " . count($matches) . " match(es) for pattern '{$pattern}' in directory '{$directory}':\n\n";
+        $output = 'Found '.count($matches)." match(es) for pattern '{$pattern}' in directory '{$directory}':\n\n";
         foreach ($matches as $match) {
-            $relativePath = str_replace($directory . DIRECTORY_SEPARATOR, '', $match);
+            $relativePath = str_replace($directory.DIRECTORY_SEPARATOR, '', $match);
             $output .= "  - {$relativePath}\n";
         }
 
@@ -94,7 +94,7 @@ class GlobPathTool extends Tool
                 if ($item === '..') {
                     continue;
                 }
-                $path = $directory . $separator . $item;
+                $path = $directory.$separator.$item;
 
                 if (is_dir($path)) {
                     $files = [...$files, ...$this->globRecursive($path, $pattern, $recursive)];
@@ -102,7 +102,7 @@ class GlobPathTool extends Tool
             }
         }
 
-        $globPattern = $directory . $separator . $pattern;
+        $globPattern = $directory.$separator.$pattern;
         $results = glob($globPattern);
 
         if ($results !== false) {

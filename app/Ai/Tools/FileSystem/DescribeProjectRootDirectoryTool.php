@@ -20,28 +20,29 @@ class DescribeProjectRootDirectoryTool extends Tool
     public function __invoke(): string
     {
         $root = getcwd();
+
         return $this->getTree($root);
     }
 
     protected function getTree(string $root): string
     {
         $tree = [];
-        $excludes = ['.git', '.idea', '.', '..', '.env','.pachy'];
+        $excludes = ['.git', '.idea', '.', '..', '.env', '.pachy'];
         $iterator = new \DirectoryIterator($root);
 
         foreach ($iterator as $fileInfo) {
-            if (!in_array($fileInfo->getFilename(), $excludes)) {
+            if (! in_array($fileInfo->getFilename(), $excludes)) {
                 $name = $fileInfo->getFilename();
                 $isDir = $fileInfo->isDir();
 
-                $tree[] = $name . ($isDir ? '/' : '');
+                $tree[] = $name.($isDir ? '/' : '');
             }
         }
-        $output = "project-root/" . PHP_EOL;
+        $output = 'project-root/'.PHP_EOL;
 
         foreach ($tree as $i => $item) {
-            $prefix = ($i == count($tree) - 1) ? "└── " : "├── ";
-            $output .= $prefix . $item . PHP_EOL;
+            $prefix = ($i == count($tree) - 1) ? '└── ' : '├── ';
+            $output .= $prefix.$item.PHP_EOL;
         }
 
         return $output;

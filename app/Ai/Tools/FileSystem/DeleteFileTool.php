@@ -42,7 +42,7 @@ class DeleteFileTool extends Tool
 
     public function __invoke(string $file_path): array
     {
-        if (!file_exists($file_path)) {
+        if (! file_exists($file_path)) {
             return [
                 'status' => 'error',
                 'operation' => 'delete_file',
@@ -51,7 +51,7 @@ class DeleteFileTool extends Tool
             ];
         }
 
-        if (!is_file($file_path)) {
+        if (! is_file($file_path)) {
             return [
                 'status' => 'error',
                 'operation' => 'delete_file',
@@ -60,7 +60,7 @@ class DeleteFileTool extends Tool
             ];
         }
 
-        if (!unlink($file_path)) {
+        if (! unlink($file_path)) {
             return [
                 'status' => 'error',
                 'operation' => 'delete_file',

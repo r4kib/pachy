@@ -58,7 +58,7 @@ class EditFileTool extends Tool
 
     public function __invoke(string $file_path, string $search, string $replace): array
     {
-        if (!is_file($file_path)) {
+        if (! is_file($file_path)) {
             return [
                 'status' => 'error',
                 'operation' => 'edit_file',
@@ -67,7 +67,7 @@ class EditFileTool extends Tool
             ];
         }
 
-        if (!is_readable($file_path)) {
+        if (! is_readable($file_path)) {
             return [
                 'status' => 'error',
                 'operation' => 'edit_file',
@@ -86,7 +86,7 @@ class EditFileTool extends Tool
             ];
         }
 
-        if (!str_contains($current, $search)) {
+        if (! str_contains($current, $search)) {
             return [
                 'status' => 'error',
                 'operation' => 'edit_file',
@@ -95,7 +95,7 @@ class EditFileTool extends Tool
             ];
         }
 
-        if (!is_writable($file_path)) {
+        if (! is_writable($file_path)) {
             return [
                 'status' => 'error',
                 'operation' => 'edit_file',
@@ -109,7 +109,7 @@ class EditFileTool extends Tool
         if ($occurrenceCount > 1) {
             return [
                 'status' => 'error',
-                'message' => "The search string is not unique (found {$occurrenceCount} occurrences). Please provide more context to identify the specific block."
+                'message' => "The search string is not unique (found {$occurrenceCount} occurrences). Please provide more context to identify the specific block.",
             ];
         }
 

@@ -36,7 +36,7 @@ class ReadFileTool extends BaseTool
 
     public function __invoke(string $file_path): string
     {
-        if (!is_file($file_path)) {
+        if (! is_file($file_path)) {
             return "Error: File '{$file_path}' does not exist.";
         }
 
@@ -52,7 +52,7 @@ class ReadFileTool extends BaseTool
 
         return match ($content) {
             false => "Error: Unable to read file '{$path}'.",
-            default => "{$content}\n\n[File read successfully: " . mb_strlen($content) . " characters]",
+            default => "{$content}\n\n[File read successfully: ".mb_strlen($content).' characters]',
         };
     }
 }

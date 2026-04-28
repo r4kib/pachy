@@ -9,14 +9,15 @@ use App\Support\StreamMarkdownRenderer;
 use Illuminate\Console\Scheduling\Schedule;
 use LaravelZero\Framework\Commands\Command;
 use NeuronAI\Agent\AgentHandler;
-use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Chat\Messages\Stream\Chunks\TextChunk;
+use NeuronAI\Chat\Messages\UserMessage;
 use NeuronAI\Workflow\Interrupt\ApprovalRequest;
 use NeuronAI\Workflow\Interrupt\WorkflowInterrupt;
 
 class Coder extends Command
 {
     protected CoderAgent $agent;
+
     protected $signature = 'coder';
 
     protected $description = 'AI Coder Agent - Write and modify code with AI assistance';
@@ -29,9 +30,11 @@ class Coder extends Command
 
         try {
             $this->runAgent();
+
             return Command::SUCCESS;
         } catch (\Exception $e) {
-            $this->error('❌ Error: ' . $e->getMessage());
+            $this->error('❌ Error: '.$e->getMessage());
+
             return Command::FAILURE;
         }
     }
@@ -42,13 +45,14 @@ class Coder extends Command
         while (true) {
             $prompt = $this->ask('What would you like me to code?');
 
-            if (empty($prompt)) continue;
+            if (empty($prompt)) {
+                continue;
+            }
 
             if (trim($prompt) === 'exit') {
                 $this->info('👋 Goodbye!');
                 break;
             }
-
 
             $this->line("💭 Processing: {$prompt}");
             $this->newLine();
@@ -70,7 +74,9 @@ class Coder extends Command
     {
         try {
             $approvalRequest = $e->getRequest();
-            if (!($approvalRequest instanceof ApprovalRequest)) return;
+            if (! ($approvalRequest instanceof ApprovalRequest)) {
+                return;
+            }
 
             foreach ($approvalRequest->getPendingActions() as $action) {
                 $this->handleApproval($action);
@@ -94,7 +100,7 @@ class Coder extends Command
     public function handleResponse(AgentHandler $response): void
     {
         $this->newLine();
-        $renderer = new StreamMarkdownRenderer();
+        $renderer = new StreamMarkdownRenderer;
 
         foreach ($response->events() as $event) {
             if ($event instanceof TextChunk) {
@@ -126,7 +132,7 @@ class Coder extends Command
             $usage->inputTokens ?? 0,
             $usage->outputTokens ?? 0,
             $usage->getTotal() ?? 0,
-            SettingsHelper::getProviderSetting()['model'] ?? "",
+            SettingsHelper::getProviderSetting()['model'] ?? '',
             getcwd()
         ));
         $this->newLine();
@@ -134,8 +140,8 @@ class Coder extends Command
 
     public function handleApproval(mixed $action): void
     {
-        $this->warn("[!] TOOL APPROVAL");
-        $this->line("Tool: {$action->name} " .
+        $this->warn('[!] TOOL APPROVAL');
+        $this->line("Tool: {$action->name} ".
             str_replace("\n", '  ', $action->description));
 
         if ($this->confirm('Allow this action?', true)) {
@@ -144,5 +150,4 @@ class Coder extends Command
             $action->reject('User declined.');
         }
     }
-
 }

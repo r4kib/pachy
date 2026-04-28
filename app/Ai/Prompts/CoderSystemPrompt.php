@@ -15,7 +15,7 @@ class CoderSystemPrompt extends SystemPrompt
                 'You help developers write clean, efficient, and maintainable code.',
                 'You have deep knowledge of REST APIs, databases, authentication, and security.',
                 'You are familiar with popular frameworks like Laravel, Symfony, React, and Vue.js.',
-                $this->loadAgentsMarkdown()
+                $this->loadAgentsMarkdown(),
             ],
             steps: [
                 'Analyze the user\'s coding request carefully to understand requirements and constraints.',
@@ -48,14 +48,15 @@ class CoderSystemPrompt extends SystemPrompt
         $files = ['agents.md', 'AGENTS.md', 'agents.MD', 'AGENTS.MD'];
 
         foreach ($files as $filename) {
-            $path = $cwd . DIRECTORY_SEPARATOR . $filename;
+            $path = $cwd.DIRECTORY_SEPARATOR.$filename;
 
             if (file_exists($path)) {
                 $content = file_get_contents($path);
-                return "## PROJECT RULES (from {$filename}):\n\n" . $content;
+
+                return "## PROJECT RULES (from {$filename}):\n\n".$content;
             }
         }
 
-        return "";
+        return '';
     }
 }

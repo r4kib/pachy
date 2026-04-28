@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace App\Ai\Tools\FileSystem;
 
+use const PATHINFO_EXTENSION;
+
+use Exception;
+use NeuronAI\RAG\DataLoader\HtmlReader;
+use NeuronAI\RAG\DataLoader\PdfReader;
 use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
-use NeuronAI\RAG\DataLoader\HtmlReader;
-use NeuronAI\RAG\DataLoader\PdfReader;
-use Exception;
 
 use function is_file;
 use function is_readable;
 use function mb_strlen;
 use function pathinfo;
 use function strtolower;
-
-use const PATHINFO_EXTENSION;
 
 class ParseFileTool extends Tool
 {
@@ -42,11 +42,11 @@ class ParseFileTool extends Tool
 
     public function __invoke(string $file_path): string
     {
-        if (!is_file($file_path)) {
+        if (! is_file($file_path)) {
             return "Error: File '{$file_path}' does not exist.";
         }
 
-        if (!is_readable($file_path)) {
+        if (! is_readable($file_path)) {
             return "Error: File '{$file_path}' is not readable.";
         }
 
@@ -64,7 +64,8 @@ class ParseFileTool extends Tool
         try {
             $content = PdfReader::getText($file_path);
             $length = mb_strlen($content);
-            return $content . "\n\n[PDF parsed successfully: {$length} characters]";
+
+            return $content."\n\n[PDF parsed successfully: {$length} characters]";
         } catch (Exception $e) {
             return "Error: Unable to parse PDF file '{$file_path}'. {$e->getMessage()}";
         }
@@ -75,7 +76,8 @@ class ParseFileTool extends Tool
         try {
             $content = HtmlReader::getText($file_path);
             $length = mb_strlen($content);
-            return $content . "\n\n[HTML parsed successfully: {$length} characters]";
+
+            return $content."\n\n[HTML parsed successfully: {$length} characters]";
         } catch (Exception $e) {
             return "Error: Unable to parse HTML file '{$file_path}'. {$e->getMessage()}";
         }

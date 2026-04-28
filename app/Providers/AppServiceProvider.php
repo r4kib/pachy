@@ -13,7 +13,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Prompt::fallbackWhen(
-            !app()->runningInConsole() || windows_os() || app()->runningUnitTests()
+            ! app()->runningInConsole() || windows_os() || app()->runningUnitTests()
         );
     }
 

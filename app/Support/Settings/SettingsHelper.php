@@ -2,7 +2,6 @@
 
 namespace App\Support\Settings;
 
-use App\Data\SettingsData;
 use Illuminate\Support\Facades\File;
 use NeuronAI\Providers\Anthropic\Anthropic;
 use NeuronAI\Providers\Gemini\Gemini;
@@ -10,20 +9,20 @@ use NeuronAI\Providers\OpenAI\OpenAI;
 
 class SettingsHelper
 {
-
     public static function globalSettingsPath(): string
     {
         $filename = 'settings.json';
         $homeDir = getenv('HOME') ?: getenv('USERPROFILE');
-        $dir = $homeDir . DIRECTORY_SEPARATOR . '.pachy';
+        $dir = $homeDir.DIRECTORY_SEPARATOR.'.pachy';
 
-        if (!File::isDirectory($dir)) {
+        if (! File::isDirectory($dir)) {
             File::makeDirectory($dir, 0755, true);
         }
-        $filePath = $dir . DIRECTORY_SEPARATOR . $filename;
-        if (!File::exists($filePath)) {
+        $filePath = $dir.DIRECTORY_SEPARATOR.$filename;
+        if (! File::exists($filePath)) {
             File::put($filePath, json_encode(['updated' => time()], JSON_PRETTY_PRINT));
         }
+
         return $filePath;
     }
 
@@ -31,7 +30,6 @@ class SettingsHelper
     {
         return json_decode(File::get(self::globalSettingsPath()), true) ?? [];
     }
-
 
     public static function storeSettings(array $settings): void
     {
@@ -46,6 +44,7 @@ class SettingsHelper
     public static function getProviderSetting(): array
     {
         $settings = self::getSettings();
+
         return $settings['providers'][0] ?? [];
     }
 
@@ -53,6 +52,7 @@ class SettingsHelper
     {
 
         $provider = self::getProviderSetting();
+
         return match ($provider['provider']) {
             'gemini' => new Gemini(
                 key: $provider['key'],
@@ -66,7 +66,7 @@ class SettingsHelper
                 key: $provider['key'],
                 model: $provider['model'],
             ),
-            default => throw new \Exception("No valid provider found."),
+            default => throw new \Exception('No valid provider found.'),
         };
     }
 }

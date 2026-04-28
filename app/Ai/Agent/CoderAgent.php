@@ -9,7 +9,6 @@ use App\Support\Settings\SettingsHelper;
 use NeuronAI\Agent\Agent;
 use NeuronAI\Agent\Nodes\ToolNode;
 use NeuronAI\Providers\AIProviderInterface;
-use NeuronAI\Providers\Gemini\Gemini;
 
 class CoderAgent extends Agent
 {

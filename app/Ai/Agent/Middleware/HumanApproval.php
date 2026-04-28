@@ -5,7 +5,6 @@ namespace App\Ai\Agent\Middleware;
 use NeuronAI\Agent\Middleware\ToolApproval;
 use NeuronAI\Tools\ToolInterface;
 
-
 class HumanApproval extends ToolApproval
 {
     public function __construct(

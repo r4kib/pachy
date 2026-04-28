@@ -2,9 +2,7 @@
 
 namespace App\Support;
 
-use Illuminate\Support\Str;
 use function Termwind\render;
-use function Termwind\terminal;
 
 class RenderHelper
 {

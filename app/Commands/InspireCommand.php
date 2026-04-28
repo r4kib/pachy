@@ -28,7 +28,7 @@ class InspireCommand extends Command
      */
     public function handle(): void
     {
-        $this->notify("Hello Web Artisan", "Love beautiful..", "icon.png");
+        $this->notify('Hello Web Artisan', 'Love beautiful..', 'icon.png');
 
         render(<<<'HTML'
             <div class="py-1 ml-2">

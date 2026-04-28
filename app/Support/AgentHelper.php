@@ -11,20 +11,20 @@ class AgentHelper
 {
     public static function initCoderAgent(): CoderAgent
     {
-        $storageDir = getcwd() . DIRECTORY_SEPARATOR . '.pachy' . DIRECTORY_SEPARATOR . 'storage';
+        $storageDir = getcwd().DIRECTORY_SEPARATOR.'.pachy'.DIRECTORY_SEPARATOR.'storage';
 
-        $dir = $storageDir . DIRECTORY_SEPARATOR . 'sessions';
+        $dir = $storageDir.DIRECTORY_SEPARATOR.'sessions';
 
-        if (!File::isDirectory($dir)) {
+        if (! File::isDirectory($dir)) {
             File::makeDirectory($dir, 0755, true);
         }
 
-        $ignoreFile = $storageDir .DIRECTORY_SEPARATOR. '.gitignore';
-        if (!File::exists($ignoreFile)) {
-            File::put($ignoreFile,"*\n!.gitignore");
+        $ignoreFile = $storageDir.DIRECTORY_SEPARATOR.'.gitignore';
+        if (! File::exists($ignoreFile)) {
+            File::put($ignoreFile, "*\n!.gitignore");
         }
 
-        $store = new FilePersistence($dir,'coder_session_');
+        $store = new FilePersistence($dir, 'coder_session_');
         $agent = CoderAgent::make();
         $agent->observe(new CliToolObserver)
             ->setPersistence($store);
