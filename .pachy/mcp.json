@@ -1,0 +1,9 @@
+{
+  "mcp": {
+    "neuron-ai-doc": {
+      "type": "remote",
+      "url": "https://docs.neuron-ai.dev/~gitbook/mcp",
+      "enabled": true
+    }
+  }
+}
