@@ -25,17 +25,13 @@ jobs:
         with:
           php-version: '8.5'
           extensions: mbstring, xml, openssl, zlib, phar
-          ini-values: phar.readonly=0
+          coverage: none
+          ini-values: phar.readonly=0, opcache.enable_cli=1, opcache.jit=tracing, opcache.jit_buffer_size=128M
 
       - name: Install Dependencies
-        run: composer install --optimize-autoloader
+        run: composer install --no-interaction --optimize-autoloader --classmap-authoritative
 
-      - name: Run Semantic Release (full pipeline)
-        uses: cycjimmy/semantic-release-action@v4
-        with:
-          extra_plugins: |
-            @semantic-release/changelog
-            @semantic-release/git
-            @semantic-release/exec
+      - name: Semantic Release
+        uses: cycjimmy/semantic-release-action@v6
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
