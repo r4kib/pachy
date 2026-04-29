@@ -1,0 +1,86 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "required": ["mcp"],
+    "properties": {
+        "mcp": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "object",
+                "required": ["type"],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["local", "remote"]
+                    },
+
+                    "command": { "type": "string" },
+                    "args": {
+                        "type": "array",
+                        "items": { "type": "string" }
+                    },
+
+                    "url": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "token": { "type": "string" },
+
+                    "timeout": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 120,
+                        "default": 30
+                    },
+
+                    "async": {
+                        "type": "boolean",
+                        "default": false
+                    },
+
+                    "headers": {
+                        "type": "object",
+                        "additionalProperties": { "type": "string" }
+                    },
+
+                    "only": {
+                        "type": "array",
+                        "items": { "type": "string" }
+                    },
+
+                    "exclude": {
+                        "type": "array",
+                        "items": { "type": "string" }
+                    },
+
+                    "enabled": {
+                        "type": "boolean",
+                        "default": true
+                    }
+                },
+
+                "allOf": [
+                    {
+                        "if": {
+                            "properties": { "type": { "const": "local" } }
+                        },
+                        "then": {
+                            "required": ["command"]
+                        }
+                    },
+                    {
+                        "if": {
+                            "properties": { "type": { "const": "remote" } }
+                        },
+                        "then": {
+                            "required": ["url"]
+                        }
+                    }
+                ],
+
+                "additionalProperties": false
+            }
+        }
+    },
+    "additionalProperties": false
+}
