@@ -2,6 +2,7 @@
 
 namespace App\Ai\Prompts;
 
+use App\Support\Settings\SkillsDiscoveryHelper;
 use NeuronAI\Agent\SystemPrompt;
 
 class CoderSystemPrompt extends SystemPrompt
