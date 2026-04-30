@@ -16,9 +16,15 @@ class McpSettingHelper
         return [];
     }
 
-    public static function getMcp():array
+    public static function getMcp(): array
     {
         $config = self::localMcpSettings();
+        $tools = [];
+
+        if (! isset($config['mcp'])) {
+            return $tools;
+        }
+
         foreach ($config['mcp'] as $key => $mcp) {
             if (($mcp['enabled'] ?? true) === false) {
                 continue;
