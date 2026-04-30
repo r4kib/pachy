@@ -19,6 +19,9 @@ class SkillToolkit extends AbstractToolkit
         return [
             ListSkillsTool::make(),
             ReadSkillTool::make(),
+            ListSkillRulesTool::make(),
+            ReadSkillRuleTool::make(),
+            LoadSkillRulesTool::make(),
         ];
 
     }

@@ -4,7 +4,7 @@
     "keywords": ["agent", "coding", "ai", "console", "cli"],
     "homepage": "https://github.com/r4kib/pachy",
     "type": "library",
-    "license": "MIT",
+    "license": "GPL-3.0-or-later",
     "support": {
         "issues": "https://github.com/r4kib/pachy/issues",
         "source": "https://github.com/r4kib/pachy"

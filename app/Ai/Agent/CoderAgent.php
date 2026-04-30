@@ -5,6 +5,7 @@ namespace App\Ai\Agent;
 use App\Ai\Agent\Middleware\HumanApproval;
 use App\Ai\Prompts\CoderSystemPrompt;
 use App\Ai\Tools\FileSystem\FileSystemToolkit;
+use App\Ai\Tools\MultiCallTool;
 use App\Ai\Tools\Skill\SkillToolkit;
 use App\Support\Settings\McpSettingHelper;
 use App\Support\Settings\SettingsHelper;
@@ -31,10 +32,15 @@ class CoderAgent extends Agent
 
     protected function tools(): array
     {
-        return [
-            FileSystemToolkit::make(),
-            SkillToolkit::make(),
+        $allTools = [
+            ...FileSystemToolkit::make()->provide(),
+            ...SkillToolkit::make()->provide(),
             ...McpSettingHelper::getMcp(),
+        ];
+
+        return [
+            ...$allTools,
+            new MultiCallTool($allTools),
         ];
     }
 
