@@ -6,14 +6,16 @@ use App\Ai\Tools\BaseTool;
 use App\Support\Settings\SkillsDiscoveryHelper;
 use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\ToolProperty;
-use NeuronAI\Tools\ToolPropertyType;
 
 class ReadSkillTool extends BaseTool
 {
-    protected string $name = "skill_read";
-
-    protected string|null $description = "Read a specific skill content by its name.";
-
+    public function __construct()
+    {
+        parent::__construct(
+            name: 'skill_read',
+            description: "Read a specific skill content by its name.",
+        );
+    }
     /**
      * @return ToolProperty[]
      */

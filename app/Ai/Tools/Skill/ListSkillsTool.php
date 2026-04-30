@@ -7,9 +7,13 @@ use App\Support\Settings\SkillsDiscoveryHelper;
 
 class ListSkillsTool extends BaseTool
 {
-    protected string $name = "skill_list";
-
-    protected string|null $description = "List all skills.";
+    public function __construct()
+    {
+        parent::__construct(
+            name: "skill_list",
+            description: "List all skills.",
+        );
+    }
 
     public function __invoke(): array
     {
