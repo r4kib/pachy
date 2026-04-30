@@ -1,0 +1,22 @@
+{
+    "mcp": {
+        "git": {
+            "type": "local",
+            "enabled": true,
+            "command": "php",
+            "args": ["mcp/git.php"]
+        },
+        "files": {
+            "type": "local",
+            "enabled": false,
+            "command": "php",
+            "args": ["mcp/files.php"]
+        },
+        "remote_api": {
+            "type": "remote",
+            "enabled": true,
+            "url": "https://mcp.example.com",
+            "token": "env:MCP_TOKEN"
+        }
+    }
+}

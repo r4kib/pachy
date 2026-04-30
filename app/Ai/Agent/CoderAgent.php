@@ -5,6 +5,8 @@ namespace App\Ai\Agent;
 use App\Ai\Agent\Middleware\HumanApproval;
 use App\Ai\Prompts\CoderSystemPrompt;
 use App\Ai\Tools\FileSystem\FileSystemToolkit;
+use App\Ai\Tools\Skill\SkillToolkit;
+use App\Support\Settings\McpSettingHelper;
 use App\Support\Settings\SettingsHelper;
 use NeuronAI\Agent\Agent;
 use NeuronAI\Agent\Nodes\ToolNode;
@@ -31,6 +33,8 @@ class CoderAgent extends Agent
     {
         return [
             FileSystemToolkit::make(),
+            SkillToolkit::make(),
+            ...McpSettingHelper::getMcp(),
         ];
     }
 
