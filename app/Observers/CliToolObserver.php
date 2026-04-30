@@ -2,7 +2,7 @@
 
 namespace App\Observers;
 
-use App\Support\RenderHelper;
+use App\Support\Render\RenderHelper;
 use NeuronAI\Observability\Events\ToolCalled;
 use NeuronAI\Observability\Events\ToolCalling;
 use NeuronAI\Observability\ObserverInterface;

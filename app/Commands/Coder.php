@@ -4,10 +4,9 @@ namespace App\Commands;
 
 use App\Ai\Agent\CoderAgent;
 use App\Support\AgentHelper;
-use App\Support\Render\DiffHelper;
-use App\Support\RenderHelper;
+use App\Support\Render\RenderHelper;
+use App\Support\Render\StreamMarkdownRenderer;
 use App\Support\Settings\SettingsHelper;
-use App\Support\StreamMarkdownRenderer;
 use Illuminate\Console\Scheduling\Schedule;
 use LaravelZero\Framework\Commands\Command;
 use NeuronAI\Agent\AgentHandler;

@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Support;
+namespace App\Support\Render;
 
-use App\Support\Render\DiffHelper;
 use function Termwind\render;
 
 class RenderHelper
