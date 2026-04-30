@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Ai\Tools\Interaction;
 
 use App\Ai\Tools\BaseTool;
+use NeuronAI\Tools\ArrayProperty;
 use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\ToolProperty;
 
@@ -28,10 +29,14 @@ class ChoiceTool extends BaseTool
                 type: PropertyType::STRING,
                 description: 'The question to display.',
             ),
-            ToolProperty::make(
+            ArrayProperty::make(
                 name: 'options',
-                type: PropertyType::ARRAY,
                 description: 'The list of options to choose from. Can be a flat array or associative (value => label).',
+                items: new ToolProperty(
+                    name: 'option',
+                    type: PropertyType::STRING,
+                    description: 'The question to display.',
+                )
             ),
             ToolProperty::make(
                 name: 'default',

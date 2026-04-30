@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Ai\Tools\Interaction;
 
 use App\Ai\Tools\BaseTool;
+use NeuronAI\Tools\ArrayProperty;
+use NeuronAI\Tools\ObjectProperty;
 use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\ToolProperty;
 
@@ -26,10 +28,56 @@ class AskUserTool extends BaseTool
     protected function properties(): array
     {
         return [
-            ToolProperty::make(
+            ArrayProperty::make(
                 name: 'questions',
-                type: PropertyType::ARRAY,
                 description: 'An array of question objects to ask the user. Each object should have id, type (text, confirm, select, multiselect), label, and optional options (for select/multiselect) or default value.',
+                items: new ObjectProperty(
+                    name: 'question',
+                    description: 'An array of question objects to ask the user.',
+                    properties: [
+                        ToolProperty::make(
+                            name: 'id',
+                            type: PropertyType::STRING,
+                            description: 'question  id for keeping track of question',
+                            required: true,
+                        ),
+                        ToolProperty::make(
+                            name: 'type',
+                            type: PropertyType::STRING,
+                            description: 'question type (text, confirm, select, multiselect)',
+                            required: true,
+                        ),
+                        ArrayProperty::make(
+                            name: 'options',
+                            description: 'question options for user to select from',
+                            items: ToolProperty::make(
+                                name: 'option',
+                                type: PropertyType::STRING,
+                                description: 'question options for user to select from',
+                            )
+                        ),
+                        ToolProperty::make(
+                            name: 'label',
+                            type: PropertyType::STRING,
+                            description: 'question label for user to select from',
+                        ),
+                        ToolProperty::make(
+                            name: 'hint',
+                            type: PropertyType::STRING,
+                            description: 'question hint',
+                        ),
+                        ToolProperty::make(
+                            name: 'default',
+                            type: PropertyType::STRING,
+                            description: 'default answer',
+                        ),
+                        ToolProperty::make(
+                            name: 'placeholder',
+                            type: PropertyType::STRING,
+                            description: 'answer placeholder',
+                        )
+                    ]
+                )
             ),
         ];
     }
