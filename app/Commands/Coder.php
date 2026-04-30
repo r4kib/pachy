@@ -4,6 +4,8 @@ namespace App\Commands;
 
 use App\Ai\Agent\CoderAgent;
 use App\Support\AgentHelper;
+use App\Support\Render\DiffHelper;
+use App\Support\RenderHelper;
 use App\Support\Settings\SettingsHelper;
 use App\Support\StreamMarkdownRenderer;
 use Illuminate\Console\Scheduling\Schedule;
@@ -141,8 +143,11 @@ class Coder extends Command
     public function handleApproval(mixed $action): void
     {
         $this->warn('[!] TOOL APPROVAL');
+
+        RenderHelper::renderApprovalPreview($action);
+
         $this->line("Tool: {$action->name} ".
-            str_replace("\n", '  ', $action->description));
+            str_replace("\n", '  ', $action->description),null,"vv");
 
         if ($this->confirm('Allow this action?', true)) {
             $action->approve();

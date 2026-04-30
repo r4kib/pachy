@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Support\Render\DiffHelper;
 use function Termwind\render;
 
 class RenderHelper
@@ -27,6 +28,20 @@ class RenderHelper
     public static function renderNoToolResult(): void
     {
         render('<div class="px-1 bg-red-600 text-white">[!] Failed to get tool result</div>');
+
+    }
+
+    public static function renderApprovalPreview(mixed $action): void
+    {
+
+        $inputs = json_decode($action->description, true);
+
+        if ($action->name === 'edit_file' && isset($inputs['file_path'], $inputs['search'], $inputs['replace'])) {
+            DiffHelper::renderDiff($inputs['search'], $inputs['replace'], $inputs['file_path']);
+        } elseif ($action->name === 'write_file' && isset($inputs['file_path'], $inputs['content'])) {
+            $oldContent = file_exists($inputs['file_path']) ? file_get_contents($inputs['file_path']) : '';
+            DiffHelper::renderDiff($oldContent, $inputs['content'], $inputs['file_path']);
+        }
 
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Ai\Tools\FileSystem;
 
+use App\Concerns\Ai\Tools\RequiresHumanApproval;
 use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\Tool;
 use NeuronAI\Tools\ToolProperty;
@@ -20,6 +21,8 @@ use function strlen;
  */
 class WriteFileTool extends Tool
 {
+    use RequiresHumanApproval;
+
     public function __construct()
     {
         parent::__construct(
