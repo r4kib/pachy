@@ -36,7 +36,10 @@ class McpSettingHelper
                 $connector->exclude($mcp['exclude']);
             }
 
-            $tools[] = $connector->tools();
+
+            foreach ($connector->tools() as $tool) {
+                $tools[] = $tool;
+            }
         }
 
         return $tools;
