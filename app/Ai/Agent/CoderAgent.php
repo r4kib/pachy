@@ -5,6 +5,7 @@ namespace App\Ai\Agent;
 use App\Ai\Agent\Middleware\HumanApproval;
 use App\Ai\Prompts\CoderSystemPrompt;
 use App\Ai\Tools\FileSystem\FileSystemToolkit;
+use App\Ai\Tools\Interaction\InteractionToolkit;
 use App\Ai\Tools\MultiCallTool;
 use App\Ai\Tools\Skill\SkillToolkit;
 use App\Support\Settings\McpSettingHelper;
@@ -34,6 +35,7 @@ class CoderAgent extends Agent
     {
         $allTools = [
             ...FileSystemToolkit::make()->provide(),
+            ...InteractionToolkit::make()->provide(),
             ...SkillToolkit::make()->provide(),
             ...McpSettingHelper::getMcp(),
         ];

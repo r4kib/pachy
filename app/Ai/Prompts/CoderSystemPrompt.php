@@ -37,6 +37,7 @@ class CoderSystemPrompt extends SystemPrompt
             toolsUsage: [
                 'ALWAYS prefer using specific file system tools (e.g., read_file, glob_path, grep_file_content) to explore, inspect, or manipulate files.',
                 'Use the multi_call tool to batch multiple operations into a single turn to improve efficiency. If you can plan ahead use this.',
+                'Use interaction tools (ask_user, confirm_action, etc.) to get feedback or clarification from the user when needed.',
                 'Only use the \'bash\' tool as a last resort.',
                 'When a tool provides feedback or error messages, integrate that information into your next thought process.',
                 'If one tool dont give satisfactory result with 5 consecutive turn move to another tool.',
