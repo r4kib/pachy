@@ -9,7 +9,7 @@ use NeuronAI\Observability\ObserverInterface;
 
 class CliToolObserver implements ObserverInterface
 {
-    public function onEvent(string $event, object $source, mixed $data = null): void
+    public function onEvent(string $event, object $source, mixed $data = null, ?string $branchId = null): void
     {
         if ($data instanceof ToolCalling) {
             $tool = $data->tool;
