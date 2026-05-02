@@ -19,7 +19,7 @@ class Coder extends Command
 {
     protected CoderAgent $agent;
 
-    protected $signature = 'coder';
+    protected $signature = 'coder {--continue}';
 
     protected $description = 'AI Coder Agent - Write and modify code with AI assistance';
 
@@ -27,7 +27,12 @@ class Coder extends Command
     {
         $this->info('🤖 Coder Agent - Interactive Mode');
         $this->info('Type your coding prompt and press Enter. Type "exit" to quit.');
-        $this->agent = AgentHelper::initCoderAgent();
+
+        if ($this->option('continue')) {
+            $this->info('🔄 Continuing last session...');
+        }
+
+        $this->agent = AgentHelper::initCoderAgent($this->option('continue'));
 
         try {
             $this->runAgent();
@@ -44,7 +49,7 @@ class Coder extends Command
     {
 
         while (true) {
-            $prompt = $this->ask('What would you like me to code?');
+            $prompt = $this->ask('What would you like me to do?');
 
             if (empty($prompt)) {
                 continue;
