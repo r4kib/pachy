@@ -11,7 +11,7 @@ use NeuronAI\Tools\ObjectProperty;
 use NeuronAI\Tools\PropertyType;
 use NeuronAI\Tools\ToolProperty;
 use Throwable;
-use function PHPUnit\Framework\isCallable;
+use function is_callable;
 
 class MultiCallTool extends BaseTool
 {
@@ -74,7 +74,7 @@ class MultiCallTool extends BaseTool
 
         foreach ($calls as $call) {
             $toolName = $call['tool'] ?? '';
-            $parameters = $call['parameters'] ?? [];
+            $parameters = $call['arguments'] ?? [];
 
             if (! isset($this->tools[$toolName])) {
                 $results[] = [
@@ -89,7 +89,7 @@ class MultiCallTool extends BaseTool
                 $tool = $this->tools[$toolName];
 
                 // Invoke the tool with its parameters
-                if (isCallable($tool)) {
+                if (is_callable($tool)) {
                     $result = $tool(...$parameters);
                 }else{
                     $result = "Tool is not callable";
@@ -123,7 +123,7 @@ class MultiCallTool extends BaseTool
             if (isset($this->tools[$toolName])) {
                 $tool = $this->tools[$toolName];
                 if (method_exists($tool, 'requiresHumanApproval')) {
-                    if ($tool->requiresHumanApproval($call['parameters'] ?? [])) {
+                    if ($tool->requiresHumanApproval($call['arguments'] ?? [])) {
                         return true;
                     }
                 }

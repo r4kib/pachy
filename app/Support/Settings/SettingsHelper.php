@@ -44,8 +44,23 @@ class SettingsHelper
     public static function getProviderSetting(): array
     {
         $settings = self::getSettings();
+        $providers = $settings['providers'] ?? [];
 
-        return $settings['providers'][0] ?? [];
+        if (empty($providers)) {
+            return [];
+        }
+
+        $activeName = $settings['active_provider'] ?? null;
+
+        if ($activeName) {
+            foreach ($providers as $provider) {
+                if (($provider['name'] ?? '') === $activeName) {
+                    return $provider;
+                }
+            }
+        }
+
+        return $providers[0] ?? [];
     }
 
     public static function getProvider()
