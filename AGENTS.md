@@ -11,3 +11,6 @@
 
 ## Testing
 - **Command:** `php vendor/bin/pest`
+
+## Gotchas
+- Dependencies are added to dev because we only want to ship compiler phar
